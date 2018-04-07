@@ -1,32 +1,29 @@
 const getter = require('./getter');
 const normalizer = require('../tools/normalizer');
 
-module.exports = (server, app) => {
+module.exports = async (client, db, server, app) => {
     
     const io = require('socket.io')(server);
-
-    require('./database')(app);
 
     // Set socket.io listeners.
     io.on('connection', (socket) => {
         
-        console.log('user connected');
+        console.log('Socket: user connected');
 
         socket.on('disconnect', () => {
-            console.log('user disconnected');
+            console.log('Socket: user disconnected');
         });
 
-        socket.on('scrap', request => {
+        socket.on('scrap', async request => {
             
             io.emit('scrap:start', { url: request.url });
     
-            getter(request.url)
-                .then( result => {
-                    io.emit('scrap:result', normalizer(result));
-                })
-                .catch( err => {
-                    io.emit('scrap:error', { status: err.status, message: err.message });
-                });
+            try {
+                const result = await getter(request.url);
+                io.emit('scrap:result', normalizer(result));
+            } catch (err) {
+                io.emit('scrap:error', { status: err.status, message: err.message });
+            }
         });
     });
 }

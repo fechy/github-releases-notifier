@@ -4,13 +4,20 @@ const schedule = require('node-schedule');
 
 const worker = require('./worker');
 
-let scheduleTime = process.env.CRON_TIME || '0 0/6 * * *';
+/**
+ * Set ups the backend enpoints
+ * 
+ * @param {MongoClient} client 
+ * @param {MongoDatabase} db 
+ * @param {Koa} app 
+ */
+module.exports = (client, db, app) => {
 
-const job = schedule.scheduleJob(scheduleTime, () => {
-    worker();
-});
+    // Create worker
+    let scheduleTime = process.env.CRON_TIME || '0 0/6 * * *';
+    const job = schedule.scheduleJob(scheduleTime, () => worker(client, db, false));
 
-module.exports = (app) => {
+    // Set up endpoints for modifying the worker
     app.use(route.get('/api/cron-time', async ctx => {
         ctx.set('Content-type', 'application/json');
 

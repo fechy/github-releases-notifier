@@ -1,15 +1,20 @@
 const path = require('path');
-const middlewares = require('koa-middlewares');
 const compress = require('koa-compress');
 const logger = require('koa-logger');
 const serve = require('koa-static');
-const route = require('koa-route');
-const send = require('koa-send')
 const bodyParser = require('koa-bodyparser');
 const Koa = require('koa');
-const app = new Koa();
+const mongodb = require('./backend/mongodb');
+
+const { databaseName } = require('./config');
+
+const api = require('./src/api');
+const worker = require('./backend');
+const database = require('./src/api/database');
 
 const port = process.env.PORT || 3000;
+
+const app = new Koa();
 
 // Logger
 app.use(logger());
@@ -36,5 +41,14 @@ const server = app.listen(port, (err) => {
     console.log(`Go to: http://0.0.0.0:${port}`);
 });
 
-require('./src/api')(server, app);
-require('./backend')(app);
+const setupEndpoints = async () => {
+    // Set up database
+    const client = await mongodb();
+    const db = client.db(databaseName);
+
+    api(client, db, server, app);
+    database(client, db, app);
+    worker(client, db, app, false);
+}
+
+setupEndpoints();
