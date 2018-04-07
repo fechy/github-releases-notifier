@@ -1,5 +1,16 @@
 const fakeData = {
-    feed: { }
+    feed: {
+        title: "This is a fake repository",
+        updated: new Date().toISOString(),
+        entry: [],
+        link: [
+            {
+                '$': {
+                    href: 'https://github.com/fechy/github-releases-notifier/releases'
+                }
+            }
+        ]
+    }
 };
 
 module.exports = async (url) =>
@@ -8,9 +19,5 @@ module.exports = async (url) =>
         url = `${url}.atom`;
     }
 
-    console.log('Mock Getter!!');
-
-    return new Promise((resolve, reject) => {
-        return resolve(fakeData);
-    });
+    return Promise.resolve(fakeData);
 };

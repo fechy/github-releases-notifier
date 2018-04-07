@@ -12,6 +12,8 @@ const fakeRepository = {
     updated_at: new Date().toISOString()
 }
 
+jest.mock('../src/backend/getter');
+
 describe('worker',  function () {
 
     let client;
@@ -25,43 +27,32 @@ describe('worker',  function () {
 
     afterAll(async () => {
         try {
-            await db.collection("repositories").remove();
-            await client.close();
+            await db.collection("repositories").drop();
+            await client.close(true);
         } catch (error) {
             throw error;
         }
     });
 
-    describe('database', function () {
-
-        test('should be connected', function () {
-            assert.ok(client.isConnected());
-        });
+    test('should be empty if there is no repository', async () => {
+        try {
+            const messages = await messageProcessor(db);
+            expect(messages).to.be.a('array');
+            expect(messages).to.have.lengthOf(0);
+        } catch (err) {
+            console.log({ err });
+        }
     });
 
-    describe('worker', function () {
-
-        test('should be empty if there is no repository', async () => {
-            try {
-                const messages = await messageProcessor(db);
-                expect(messages).to.be.a('array');
-                expect(messages).to.have.lengthOf(0);
-            } catch (err) {
-                console.log({ err });
-            }
-        });
-
-        test('should not be empty if there is a repository', async () => {
-            try {
-                await db.collection("repositories").insert(fakeRepository);
-                const messages = await messageProcessor(db);
-                expect(messages).to.be.a('array');
-                expect(messages).to.have.lengthOf(1);
-            } catch (err) {
-                console.log({ err });
-            }
-        });
-
+    test('should not be empty if there is a repository', async () => {
+        try {
+            await db.collection("repositories").insert(fakeRepository);
+            const messages = await messageProcessor(db);
+            expect(messages).to.be.a('array');
+            expect(messages).to.have.lengthOf(1);
+        } catch (err) {
+            console.log({ err });
+        }
     });
 
 });

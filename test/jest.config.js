@@ -1,4 +1,3 @@
 module.exports = {
-    verbose: true,
-    // automock: true
+    verbose: true
 };
