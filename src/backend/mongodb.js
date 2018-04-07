@@ -1,5 +1,4 @@
 const MongoClient = require('mongodb').MongoClient;
-const assert = require('assert');
 
 const host = process.env.MONGO_HOST || 'localhost';
 
