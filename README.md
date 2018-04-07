@@ -1,6 +1,6 @@
 # Github Release Notifier
 
-Regularly I'll be finding myself to be lurking on Github releases looking for the newest release of a library I use for one of my projects. Problem is, I don't have an option to subscribe to a repository and receive a notification when there is a new release available so I have to come back regularly and see for myself.
+Regularly, I find myself lurking on Github release page looking for the newest release of a library I use for one of my projects. Problem is, I don't have an option to subscribe to a repository and receive a notification when there is a new release available so I have to come back regularly and see for myself.
 Thats where this little application comes handy.
 
 This application lets you **subscribe** to a repository and notifies you when there is a new release.

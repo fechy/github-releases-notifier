@@ -1,6 +1,3 @@
-// const expect = require('chai').expect;
-const assert = require('assert');
-
 const { databaseName } = require('../src/config');
 
 const mongodb = require('../src/backend/mongodb');
