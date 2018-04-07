@@ -62,12 +62,10 @@ npm run start
 
 Note that this application requires to be left running in the background for scheduling the routine checks.
 
-## Limitations
+## Limitations and known issues
 
-- [ ] - Only Telegram bot is available for the notifications.
-- [ ] - Depending on the system, the wroker will be oftimes in a 
-
-different timezone or the clock will not be synchronized.
+- [ ] Only Telegram bot is available for the notifications.
+- [ ] Depending on the system, the worker will be oftimes in a different timezone or the clock will not be synchronized.
 
 ## Licenses
 
