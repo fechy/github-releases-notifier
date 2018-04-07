@@ -28,7 +28,7 @@ class Main extends React.PureComponent
         };
 
         this._handleAnalize = this._handleAnalize.bind(this);
-        this.storeUrl = this.storeUrl.bind(this);
+        this.storeUrl       = this.storeUrl.bind(this);
 
         this.props.socket.on('scrap:start', this._handleStartScrap.bind(this));
         this.props.socket.on('scrap:error', this._handleScrapError.bind(this));
@@ -43,33 +43,38 @@ class Main extends React.PureComponent
         this.setState({ loading: false, error: data.message });
     }
 
-    _handleScrapResult(data) {
+    async _handleScrapResult(data) {
         if (data) {
-            doesRepositoryExist(data.repository).end( (err, res) => {
-                const error = err ? err : (res.body.exist ? 'This repository already exist' : null);
+            try {
+                const result = await doesRepositoryExist(data.repository);
+
+                const { exists, error } = result.body;
+
                 this.setState({ 
                     loading: false, 
                     error, data, 
-                    exists: res.body.exists
+                    exists
                 });
-            });
+            } catch (error) {
+                this.setState({ loading: false, error });
+            }
         }
     }
 
     _handleAnalize () {
         if (!this.state.loading) {
             const value = this.refs["input"].getValue();
-            if (value.length > 0) {
+            if (value.length > 0 && isValidUrl(value)) {
                 this.props.socket.emit('scrap', { 
                     url: this.refs["input"].getValue()
                 });
             } else {
-                this.setState({ error: "Invalid entry" });
+                this.setState({ loading: false, error: "Invalid entry" });
             }
         }
     }
 
-    storeUrl() {
+    async storeUrl() {
         const { url, updated_at } = this.state.data
 
         const data = {
@@ -78,17 +83,28 @@ class Main extends React.PureComponent
             last_updated: updated_at
         };
 
-        storeRepository(data).end( (err, res) => {
+        try {
+            const existCheck = await doesRepositoryExist(data.repository);
+            if (existCheck.body.exists) {
+                this.setState({ loading: false, error: "You are already watching this repository" });
+                return;
+            }
+
+            const result = await storeRepository(data);
 
             this.refs["watch-list"].reloadList();
             this.refs["input"].clearValue();
 
+            const { status, error } = result.body;
+
             this.setState({ 
-                status: res.body.status,
-                error: res.body.error ? res.body.error.errmsg : null,
+                status,
+                error: error ? error.errmsg : null,
                 data: null
             });
-        });
+        } catch (error) {
+            this.setState({ error });
+        }
     }
 
     render() {
@@ -100,10 +116,7 @@ class Main extends React.PureComponent
                     <WatchList ref="watch-list" socket={this.props.socket} />
                     <div className="form-container">
                         <div className="container-small">
-                            <Input ref="input" 
-                                    validator={isValidUrl} 
-                                    placeholder={`https://github.com/author/repository/releases`} 
-                            />
+                            <Input ref="input" validator={isValidUrl} placeholder={`https://github.com/author/repository/releases`} />
                             <button onClick={this._handleAnalize} disabled={this.state.loading}>Analize</button>
                             <button onClick={this.storeUrl} disabled={this.state.loading || this.state.data == null || this.state.exists}>WATCH</button>
                             {this.state.error ? <div className="error-message">{this.state.error}</div> : null}

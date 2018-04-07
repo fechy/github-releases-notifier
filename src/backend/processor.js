@@ -1,4 +1,4 @@
-const normalizer = require('../src/tools/normalizer');
+const normalizer = require('../tools/normalizer');
 
 const nothingNewMessage = (repository) => (
     `Nothing new for ${repository}`

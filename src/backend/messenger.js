@@ -1,4 +1,4 @@
-const { sendMessage } = require('../src/tools/bot');
+const { sendMessage } = require('../tools/bot');
 
 const getFullMessage = (messages) => {
     return `<strong>Github releases bot results:</strong>\r\n<pre>${messages}</pre>`;

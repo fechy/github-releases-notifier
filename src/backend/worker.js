@@ -1,11 +1,8 @@
-const MongoClient = require('mongodb').MongoClient;
-const assert = require('assert');
-const host = process.env.MONGO_HOST || 'localhost';
-
 const processor = require('./processor');
 const messenger = require('./messenger');
-const getter = require('../src/api/getter');
-const normalizer = require('../src/tools/normalizer');
+const getter = require('./getter');
+
+const normalizer = require('../tools/normalizer');
 
 /**
  * Worker for scrapping the release info
@@ -30,7 +27,7 @@ module.exports = async (client, db, closeOnFinish) => {
         console.error(err);
     } finally {
         if (closeOnFinish) {
-            client.close();
+            await client.close();
         }
     }
 };

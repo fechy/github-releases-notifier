@@ -1,17 +1,17 @@
 import request from 'superagent';
 
-export const doesRepositoryExist = (repository) => {
-    return request.post('/api/exists', { repository });
+export const doesRepositoryExist = async (repository) => {
+    return await request.post('/api/exists', { repository });
 };
 
-export const storeRepository = (repositoryData) => {
-    return request.post('/api/store-url', repositoryData);
+export const storeRepository = async (repositoryData) => {
+    return await request.post('/api/store-url', repositoryData);
 };
 
-export const getWatchList = () => {
-    return request.get('/api/watch-list');
+export const getWatchList = async () => {
+    return await request.get('/api/watch-list');
 };
 
-export const removeFromList = (repository) => {
-    return request.post('/api/remove', { repository });
+export const removeFromList = async (repository) => {
+    return await request.post('/api/remove', { repository });
 };

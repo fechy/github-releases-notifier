@@ -29,30 +29,33 @@ class WatchList extends React.PureComponent
         this._loadWatchList();
     }
 
-    reloadList() {
+    async reloadList() {
         this._loadWatchList();
     }
 
-    _loadWatchList() {
-        getWatchList().end((err, res) => {
+    async _loadWatchList() {
+        try {
+            const result = await getWatchList();
             this.setState({
-                error: err,
-                list: res.body.collections
-            })
-        });
+                list: result.body.collections
+            });
+        } catch (error) {
+            this.setState({ error });
+        }
     }
 
     _loadRepositoryData(repository) {
         this.props.socket.emit('scrap', { url: repository.url });
     }
 
-    _deleteRepositoryData(repository) {
+    async _deleteRepositoryData(repository) {
         if (confirm(`Are you sure you want to stop watching ${repository.repository}?`)) {
-            removeFromList(repository.repository).end((err, res) => {
-                if (!err) {
-                    this._loadWatchList();
-                }
-            });
+            try {
+                const result = await removeFromList(repository.repository);
+                this._loadWatchList();
+            } catch (error) {
+                this.setState({ error })
+            }
         }
     }
 
