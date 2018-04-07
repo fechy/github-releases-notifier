@@ -1,17 +1,13 @@
+const pattern = /^https?:\/\/github.com\/([^/]+\/[^/]+)\/releases/i;
 
-const isValidUrl = (url) => {
-    return /^http(?:.):\/\/github.com\/(.*)\/(.*)\/releases/gi.test(url);
-};
+const isValidUrl = (url) => pattern.test(url);
 
 const getRepositoryURL = (url) => {
-    if (isValidUrl(url)) {
-        const parts = url.match(/^http(?:.):\/\/github.com\/(.*)\/(.*)\/releases/);
-        if (parts.length == 3) {
-            return parts[1] + "/" + parts[2];
-        }
+    if (!isValidUrl(url)) {
+        return null;
     }
 
-    return null;
+    return url.match(pattern)[1];
 };
 
 module.exports = {
