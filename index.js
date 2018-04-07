@@ -9,8 +9,6 @@ const bodyParser = require('koa-bodyparser');
 const Koa = require('koa');
 const app = new Koa();
 
-const config = require('./config/index');
-
 const port = process.env.PORT || 3000;
 
 // Logger
@@ -20,11 +18,6 @@ app.use(logger());
 app.use(bodyParser());
 
 // Web app
-app.use(route.get('/', async ctx => {
-    await send(ctx, '/public/index.html');
-}));
-
-// Serve static files
 app.use(serve(path.join(__dirname, 'public')));
 
 // Compress
@@ -44,4 +37,4 @@ const server = app.listen(port, (err) => {
 });
 
 require('./src/api')(server, app);
-require('./backend/worker')(app);
+require('./backend')(app);

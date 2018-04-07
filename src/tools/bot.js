@@ -14,10 +14,10 @@ const sendMessage = (text) => {
     return new Promise((resolve, reject) => {
         bot.sendMessage({ chat_id: chatId, text: text, parse_mode: 'HTML' }, function (err, message) {
             if (err) {
-                reject(err);
-            } else {
-                resolve(message);
+                return reject(err);
             }
+            
+            return resolve(message);
         });
     });
 };

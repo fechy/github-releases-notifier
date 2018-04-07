@@ -5,11 +5,15 @@ services:
     image: mongo
     ports:
       - "27017:27017"
+    networks:
+      - backend
 
   web:
     build: .
     ports:
       - "3000:3000"
+    networks:
+      - backend
     volumes:
       - .:/app
       #- /etc/localtime:/etc/localtime:ro 
@@ -18,3 +22,6 @@ services:
       - mongodb
     env_file: 
       - ./.env
+
+networks:
+  backend:

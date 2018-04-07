@@ -15,7 +15,7 @@ RUN rm -Rf /var/cache/apk
 RUN npm install webpack -g
 
 WORKDIR /app
-ADD . /app
+COPY . /app
 RUN npm install
 
 EXPOSE 3000
