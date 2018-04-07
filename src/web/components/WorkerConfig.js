@@ -2,26 +2,13 @@ import React from 'react';
 import request from 'superagent';
 import classnames from 'classnames';
 import moment from 'moment';
-import ReactModal from 'react-modal';
 import FontAwesomeIcon from '@fortawesome/react-fontawesome'
 import faEdit from '@fortawesome/fontawesome-free-solid/faEdit'
+import { Alert, Button, Modal, ModalBody, ModalHeader, ModalFooter } from 'reactstrap';
 
 import Input from '../components/Input';
 
 const cronCheckTimeInterval = 60000; // every minute
-
-ReactModal.setAppElement('#root');
-
-const customStyles = {
-    content : {
-      top                   : '50%',
-      left                  : '50%',
-      right                 : 'auto',
-      bottom                : 'auto',
-      marginRight           : '-50%',
-      transform             : 'translate(-50%, -50%)'
-    }
-  };
 
 const validateCron = function (entry) {
     return /^(?:[1-9]?\d|\*)(?:(?:[\/-][1-9]?\d)|(?:,[1-9]?\d)+)?$/.test(entry);
@@ -78,30 +65,30 @@ class WorkerConfig extends React.PureComponent
     }
 
     render() {
+        const codeForUrl = this.state.code.split(/\s/).join('_');
         return (
-            <div className="worker-container">
-                <ReactModal isOpen={this.state.modal_opened}
-                    contentLabel="Example Modal"
-                    ariaHideApp={true}
-                    onRequestClose={() => this.setState({ modal_opened: false })}
-                    shouldCloseOnEsc={true}
-                    style={customStyles}
-                >
-                    <div className="dialog-body">
-                        <h1>Edit Schedule</h1>
-                        <Input ref="input"
-                               value={this.state.code} 
-                               placeholder={'* * * * *'} 
-                               validator={validateCron}
-                        />
-                        <button onClick={this._handleChangeCronTime}>SET</button>
-                    </div>
-                </ReactModal>
-                <div className={classnames("worker-status", this.state.status ? "running" : "stopped")} />
-                <div className="worker-data">Next execution scheduled: {this.state.next_execution}</div>
-                <button onClick={() => this.setState({ modal_opened: true })} >
-                    <FontAwesomeIcon icon={faEdit} className="btn-icon" />
-                </button>
+            <div>
+                <Modal isOpen={this.state.modal_opened}>
+                    <ModalHeader>Edit Schedule</ModalHeader>
+                    <ModalBody style={{ textAlign: 'center' }}>
+                        <div>Enter a valid cron-like code</div>
+                        <Input ref="input" className="text-center" value={this.state.code} placeholder={'* * * * *'} validator={validateCron} />
+                        <div>
+                            <small>You can check on <a href={`https://crontab.guru/#*_*_*_*_*`}>https://crontab.guru/#*_*_*_*_*</a> how to do it</small>
+                        </div>
+                    </ModalBody>
+                    <ModalFooter>
+                        <Button color="info" onClick={() => this.setState({ modal_opened: false })}>CANCEL</Button>
+                        <Button color="danger" onClick={this._handleChangeCronTime}>SET</Button>
+                    </ModalFooter>
+                </Modal>
+                <Alert className="worker-container">
+                    <div className={classnames("worker-status", this.state.status ? "running" : "stopped")} />
+                    <div className="worker-data">Next execution scheduled: {this.state.next_execution}</div>
+                    <Button color="primary" onClick={() => this.setState({ modal_opened: true })} >
+                        <FontAwesomeIcon icon={faEdit} className="btn-icon" />
+                    </Button>
+                </Alert>
             </div>
         )
     }

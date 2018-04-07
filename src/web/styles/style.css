@@ -2,48 +2,42 @@ body {
     font-family: Arial, Helvetica, sans-serif
 }
 
-input,
-button,
-select {
-    padding: 10px 5px;
-    border: 2px solid #777;
-    font-size: 1.5em;
-    border-radius: 5px;
-}
-
 button {
     cursor: pointer;
 }
 
-input:focus,
-button:focus,
-select:focus {
+input[type=text] {
+    border: 1px solid #ccc;
+    padding: 5px;
+    border-radius: 5px;
+}
+
+input[type=text]:focus {
     outline: none;
-    border: 2px solid #BADA55;
+}
+
+.text-center {
+    text-align: center !important;
+}
+
+.title {
+    padding: 20px 0;
 }
 
 .app-container h1 {
     text-align: center;
 }
 
-.container {
+.main-container {
     display: grid;
-    grid-template-columns: 1fr 2fr;
+    grid-template-columns: 1fr 3fr;
     margin-bottom: 10px;
 }
 
 .container-small {
     display: grid;
-    grid-template-columns: auto 150px 150px 150px;
+    grid-template-columns: auto 50px 50px 150px;
     grid-gap: 10px;
-}
-
-.container-small button {
-    background-color: #BADA55;    
-}
-
-.container-small button:disabled {
-    background-color: #ccc;
 }
 
 .form-container {
@@ -51,7 +45,6 @@ select:focus {
 }
 
 .watch-list {
-    background: #BADA55;
     padding: 10px;
 }
 
@@ -62,17 +55,10 @@ select:focus {
 }
 
 .watch-list li {
-    margin: 0 0 5px 0;
-    border: 1px solid #000;
     padding: 5px;
-    background: rgb(193, 247, 15);
     display: grid;
     grid-template-columns: auto 50px 50px;
     grid-gap: 10px;
-}
-
-.list-btn {
-    background-color: aquamarine;
 }
 
 .watch-list li .item-data {
@@ -83,20 +69,6 @@ select:focus {
     margin: 0;
 }
 
-.watch-list button .btn-icon {
-    color: blue;
-}
-
-.watch-list button:hover {
-    border-color: blue;
-    cursor: pointer;
-    background: blue;
-}
-
-.watch-list button:hover .btn-icon {
-    color: aquamarine;
-}
-
 .error-message {
     padding: 10px;
     color: #000;
@@ -105,39 +77,24 @@ select:focus {
     grid-column: 1 / -1;
 }
 
-.data-container {
-    border: 2px solid #BADA55;
-    padding: 10px;
-}
-
 .input-url.invalid {
     border-color:#F00;
 }
 
 .worker-container {
     display: grid;
-    grid-template-columns: 25px auto 30px;
-    grid-template-rows: 30px;
-    margin: 10px 0;
-    padding: 5px;
-    background-color: #ccc;
-    border: 2px solid #999;
-}
-
-.worker-container button {
-    padding: 0;
-    font-size: 1em;
-    cursor: pointer;
+    grid-template-columns: 25px auto 40px;
 }
 
 .worker-data {
-    padding: 2px 0 0 10px;
+    padding: 8px 0 0 30px;
 }
 
 .worker-status {
     display: inline-block;
-    width:20px;
-    height:20px;
+    width:25px;
+    height:25px;
+    margin: 5px;
     background-color:#F00;
     border-radius: 50%;
 }
@@ -170,4 +127,8 @@ select:focus {
 .dialog-body button {
     background: #BADA55;
     cursor: pointer;
+}
+
+.watch-list-tooltip {
+    min-width: 250px;
 }

@@ -1,12 +1,18 @@
 import React from 'react';
 import request from 'superagent';
+import { Alert, Button, FormGroup, Label } from 'reactstrap';
 
 import {
     doesRepositoryExist,
     storeRepository
 } from '../actions';
 
-import { getRepositoryURL, isValidUrl } from '../../tools/validator'
+import { getRepositoryURL, isValidUrl } from '../../tools/validator';
+
+import FontAwesomeIcon from '@fortawesome/react-fontawesome';
+import faSearch from '@fortawesome/fontawesome-free-solid/faSearch';
+import faEye from '@fortawesome/fontawesome-free-solid/faEye';
+import faGithubAlt from '@fortawesome/fontawesome-free-brands/faGithubAlt';
 
 import Input from '../components/Input';
 import FeedData from '../components/FeedData';
@@ -63,7 +69,9 @@ class Main extends React.PureComponent
 
     _handleAnalize () {
         if (!this.state.loading) {
+            
             const value = this.refs["input"].getValue();
+
             if (value.length > 0 && isValidUrl(value)) {
                 this.props.socket.emit('scrap', { 
                     url: this.refs["input"].getValue()
@@ -85,6 +93,7 @@ class Main extends React.PureComponent
 
         try {
             const existCheck = await doesRepositoryExist(data.repository);
+            
             if (existCheck.body.exists) {
                 this.setState({ loading: false, error: "You are already watching this repository" });
                 return;
@@ -107,25 +116,36 @@ class Main extends React.PureComponent
         }
     }
 
+    renderError() {
+        if (this.state.error) {
+            return <Alert color="danger" className="error-message">{this.state.error}</Alert>
+        }
+    }
+
     render() {
+        const canWatch = !(this.state.loading || this.state.data == null || this.state.exists);
         return (
-            <div className="app-container">
-                <h1>Github Release Notifier</h1>
+            <React.Fragment>
+                <h1 className="title"><FontAwesomeIcon icon={faGithubAlt} /> Github Release Notifier</h1>
                 <WorkerConfig />
-                <div className="container">
+                <div className="main-container">
                     <WatchList ref="watch-list" socket={this.props.socket} />
                     <div className="form-container">
                         <div className="container-small">
                             <Input ref="input" validator={isValidUrl} placeholder={`https://github.com/author/repository/releases`} />
-                            <button onClick={this._handleAnalize} disabled={this.state.loading}>Analize</button>
-                            <button onClick={this.storeUrl} disabled={this.state.loading || this.state.data == null || this.state.exists}>WATCH</button>
-                            {this.state.error ? <div className="error-message">{this.state.error}</div> : null}
+                            <Button color="primary" onClick={this._handleAnalize} disabled={this.state.loading}>
+                                <FontAwesomeIcon icon={faSearch} />
+                            </Button>
+                            <Button color="info" onClick={this.storeUrl} disabled={!canWatch}>
+                                <FontAwesomeIcon icon={faEye} />
+                            </Button>
+                            {this.renderError()}
                         </div>
                         <br />
                         <FeedData loading={this.state.loading} feed={this.state.data} />
                     </div>
                 </div>
-            </div>
+            </React.Fragment>
         )
     }
 }

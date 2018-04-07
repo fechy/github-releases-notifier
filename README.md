@@ -65,7 +65,7 @@ Note that this application requires to be left running in the background for sch
 ## Limitations and known issues
 
 - [ ] Only Telegram bot is available for the notifications.
-- [ ] Depending on the system, the worker will be oftimes in a different timezone or the clock will not be synchronized.
+- [ ] Depending on the system, the worker will be of times in a different timezone or the clock will not be synchronized.
 
 ## Licenses
 

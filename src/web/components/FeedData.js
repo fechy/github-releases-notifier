@@ -1,4 +1,5 @@
 import React from 'react';
+import { Jumbotron } from 'reactstrap';
 
 class FeedData extends React.PureComponent
 {
@@ -21,10 +22,10 @@ class FeedData extends React.PureComponent
 
     render() {
         return (
-            <div className="data-container">
-                <div><strong>Repository information:</strong></div>
+            <Jumbotron className="data-container">
+                <h3><strong>Repository information:</strong></h3>
                 {this._renderFeed()}
-            </div>
+            </Jumbotron>
         )
     }
 }

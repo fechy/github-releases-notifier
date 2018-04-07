@@ -1,13 +1,14 @@
 import React from 'react';
 import moment from 'moment';
 
-import FontAwesomeIcon from '@fortawesome/react-fontawesome'
-import faInfoCircle from '@fortawesome/fontawesome-free-solid/faInfoCircle'
-import faTrash from '@fortawesome/fontawesome-free-solid/faTrash'
+import FontAwesomeIcon from '@fortawesome/react-fontawesome';
+import faInfoCircle from '@fortawesome/fontawesome-free-solid/faInfoCircle';
+import faTrash from '@fortawesome/fontawesome-free-solid/faTrash';
+import { Alert, ListGroup, ListGroupItem, Button, Tooltip } from 'reactstrap';
 
 import { getWatchList, removeFromList } from '../actions';
 
-const DATE_FORMAT = 'YYYY-MM-DD HH:mm:ss';
+import WatchListItem from './WatchListItem';
 
 class WatchList extends React.PureComponent
 {
@@ -61,30 +62,26 @@ class WatchList extends React.PureComponent
 
     _renderItem(repository) {
         return (
-            <li key={`item-${repository.repository.replace('/', '_')}`}>
-                <div className="item-data">
-                    <h3>{repository.repository}</h3>
-                    <small><strong>Last Update:</strong> {moment(repository.last_updated).format(DATE_FORMAT)}</small>
-                    <small><strong>Last Check:</strong> {repository.last_check_at ? moment(repository.last_check_at).format(DATE_FORMAT) : 'never' }</small>
-                </div>
-                <button className="list-btn btn-load" onClick={ () => this._loadRepositoryData(repository) }>
-                    <FontAwesomeIcon icon={faInfoCircle} className="btn-icon" />
-                </button>
-                <button className="list-btn btn-delete" onClick={ () => this._deleteRepositoryData(repository) }>
-                    <FontAwesomeIcon icon={faTrash} className="btn-icon" />
-                </button>
-            </li>
+            <WatchListItem key={repository.repository} 
+                            data={repository} 
+                            onLoad={this._loadRepositoryData} 
+                            onDelete={this._deleteRepositoryData} />
         )
     }
 
+    _renderAlert() {
+        if (this.state.error) {
+            return (<Alert color="alert">{this.state.error}</Alert>);
+        }
+    }
+
     render() {
-        const { list, error } = this.state;
+        const { list } = this.state;
         return (
             <div className="watch-list">
-                <div>{error}</div>
-                <ul>
-                    {list.map(this._renderItem)}
-                </ul>
+                {this._renderAlert()}
+                <h4>Watch List</h4>
+                <ListGroup>{ list.map(this._renderItem) }</ListGroup>
             </div>
         )
     }

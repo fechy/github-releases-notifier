@@ -31,12 +31,17 @@ class Input extends React.PureComponent
     }
 
     render() {
+        const { id, className } = this.props;
         const { isValid, value } = this.state;
+
+        const classes = classnames("input-url", !isValid && value != "" ? "invalid" : null, className);
+
         return (
-            <input className={classnames("input-url", !isValid && value != "" ? "invalid" : null)}
-                    value={value} 
-                    onChange={this._handleOnChange}
-                    placeholder={this.props.placeholder}
+            <input type="text" 
+                   className={classes}
+                   value={value} 
+                   onChange={this._handleOnChange}
+                   placeholder={this.props.placeholder}
             />
         )
     }
