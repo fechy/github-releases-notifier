@@ -8,12 +8,12 @@ const endsWith = function (str, suffix) {
 };
 
 module.exports = (url) => {
+    
+    if (!url.endsWith('.atom')) {
+        url = `${url}.atom`;
+    }
+    
     return new Promise((resolve, reject) => {
-
-        if (!endsWith(url, '.atom')) {
-            url = `${url}.atom`;
-        }
-
         console.log(`Scrapping: ${url}`);
 
         request.get(url)

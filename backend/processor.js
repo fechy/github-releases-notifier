@@ -12,38 +12,27 @@ const notFoundMessage = (repository) => (
     `${repository} not found`
 );
 
-const process = (db, rawFeed) => {
+const process = async (db, rawFeed) => {
     
     const normalized = normalizer(rawFeed);
 
-    return new Promise(async (resolve, reject) => {
-        const collection = await db.collection('repositories').findOne({ repository: normalized.repository });
-        if (!collection) {
-            return reject(notFoundMessage(normalized.repository));
-        }
+    const { repository, updated_at } = normalized;
 
-        const hasNewRelease = (collection.last_updated != normalized.updated_at);
-        const resultMsg = hasNewRelease ? newReleaseMessage(normalized.repository) : nothingNewMessage(normalized.repository);;
+    const collection = await db.collection('repositories').findOne({ repository });
+    if (!collection) {
+        throw new Error(notFoundMessage(repository));
+    }
 
-        // Lets update the values
-        collection.last_check_at = new Date().toISOString();
-        collection.last_updated = normalized.updated_at;
+    const hasNewRelease = (collection.last_updated != updated_at);
+    const resultMsg = hasNewRelease ? newReleaseMessage(normalized.repository) : nothingNewMessage(repository);
 
-        await db.collection('repositories').update({ _id: collection._id }, collection);
+    // Lets update the values
+    collection.last_check_at = new Date().toISOString();
+    collection.last_updated = updated_at;
 
-        return resolve(resultMsg);
-    })
+    await db.collection('repositories').update({ _id: collection._id }, collection);
+
+    return resultMsg;
 }
 
-module.exports = async (db, collections) => {
-    try {
-        const results = await Promise.all(collections)
-        const promises = results.map( rawFeed => {
-            return process(db, rawFeed);
-        });
-
-        return Promise.all(promises);
-    } catch (err) {
-        console.log(err);
-    }
-};
+module.exports = async (db, collections) => await process(db, collections);

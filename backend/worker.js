@@ -15,26 +15,18 @@ module.exports = async () => {
     const client = await mongodb();
     const db = client.db(databaseName);
 
-    const stream = await db.collection('repositories').find().stream();
+    try {
+        const collections = await db.collection('repositories').find().toArray();
+        const messages = await Promise.all(collections.map( async repo => {
+            const process = await getter(repo.url);
+            const result = await processor(db, process);
+            return result;
+        }));
 
-    const collections = [];
-    stream.on('data', function(repo) {
-        collections.push(getter(repo.url));
-    });
-
-    stream.on('error', function(err) {
+        await messenger(messages);
+    } catch (err) {
         console.error(err);
-    });
-
-    stream.on('end', async () => {
-        try {
-            const processes = await processor(db, collections);
-            const messages = await Promise.all(processes)
-            await messenger(messages);
-        } catch (err) {
-            console.error(err);
-        } finally {
-            client.close();
-        }
-    });
+    } finally {
+        client.close();
+    }
 };
