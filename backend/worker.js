@@ -17,9 +17,11 @@ const normalizer = require('../src/tools/normalizer');
 module.exports = async (client, db, closeOnFinish) => {
     try {
         const collections = await db.collection('repositories').find().toArray();
-        const messages = await Promise.all(collections.map( async repo => {
-            const process = await getter(repo.url);
-            const result = await processor(db, process);
+        const messages = await Promise.all(collections.map( async repo =>
+        {
+            const processedXml = await getter(repo.url);
+            const result = await processor(db, processedXml);
+            
             return result;
         }));
 

@@ -12,7 +12,10 @@ const notFoundMessage = (repository) => (
     `${repository} not found`
 );
 
-const process = async (db, rawFeed) => {
+/**
+ * Process a scrapped Github release feed
+ */
+module.exports = async (db, rawFeed) => {
     
     const normalized = normalizer(rawFeed);
 
@@ -34,5 +37,3 @@ const process = async (db, rawFeed) => {
 
     return resultMsg;
 }
-
-module.exports = async (db, collections) => await process(db, collections);
