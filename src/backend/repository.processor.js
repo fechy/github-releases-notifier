@@ -26,7 +26,10 @@ module.exports = async (db, rawFeed) => {
         throw new Error(notFoundMessage(repository));
     }
 
-    const hasNewRelease = (collection.last_updated != updated_at);
+    const lastUpdatedTime = new Date(collection.last_updated).getTime();
+    const newUpdatedTime  = new Date(updated_at).getTime();
+
+    const hasNewRelease = (lastUpdatedTime < newUpdatedTime);
     const resultMsg = hasNewRelease ? newReleaseMessage(normalized.repository) : nothingNewMessage(repository);
 
     // Lets update the values
