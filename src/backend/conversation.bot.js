@@ -1,22 +1,24 @@
 const route = require('koa-route');
-const { bot, sendMessage } = require('../tools/bot');
 
+const mongodb = require('./mongodb');
+
+const { bot, sendMessage } = require('../tools/bot');
 const { getList, getTotal, removeOne, addOne } = require('./watchlist');
 
 const handleConversation = require('./conversations');
 
-const startBot = (db) => {
+const startBot = () => {
     try {
-        bot.on('message', (message) => handleConversation(message, db))
+        bot.on('message', (message) => handleConversation(message, mongodb.db))
         .on('error', (err) => {
-            console.error(err);
+            console.error({ err });
         }).start();
     } catch (err) {
         console.err({ BOT_ERROR: err });
     }
 }
 
-module.exports = (app, db) => {
+module.exports = (app) => {
 
     let botStatus = false;
 
@@ -33,7 +35,7 @@ module.exports = (app, db) => {
         ctx.set('Content-type', 'application/json');
 
         if (!botStatus) {
-            startBot(db);
+            startBot();
             botStatus = true;
         }
 

@@ -1,6 +1,8 @@
 const messageProcessor = require('./worker.processor');
 const messenger = require('./messenger');
 
+const mongodb = require('./mongodb');
+
 /**
  * Worker for scrapping the release info
  * 
@@ -8,9 +10,9 @@ const messenger = require('./messenger');
  * @param {MongoDatabase} db 
  * @param {boolean} closeOnFinish 
  */
-module.exports = async (client, db, closeOnFinish, sendMessageForNotFound) => {
+module.exports = async (closeOnFinish, sendMessageForNotFound) => {
     try {
-        const messages = await messageProcessor(db, sendMessageForNotFound);
+        const messages = await messageProcessor(mongodb.db, sendMessageForNotFound);
         if (messages.length > 0) {
             await messenger(messages);
         }
@@ -18,7 +20,7 @@ module.exports = async (client, db, closeOnFinish, sendMessageForNotFound) => {
         console.error(err);
     } finally {
         if (closeOnFinish) {
-            await client.close();
+            await mongodb.client.close();
         }
     }
 };

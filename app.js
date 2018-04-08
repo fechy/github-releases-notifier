@@ -5,7 +5,10 @@ const serve = require('koa-static');
 const bodyParser = require('koa-bodyparser');
 const Koa = require('koa');
 
-const port = process.env.PORT || 3000;
+const scheduler       = require('./src/backend/scheduler');
+const socket          = require('./src/backend/socket');
+const repositoryApi   = require('./src/backend/repository.api');
+const conversationBot = require('./src/backend/conversation.bot');
 
 const app = new Koa();
 
@@ -26,12 +29,8 @@ app.on('error', (err, ctx) => {
     console.error('server error', err, ctx)
 });
 
-const server = app.listen(port, (err) => {
-    if (err) {
-        console.error({ err });
-    }
-    
-    console.log(`Go to: http://0.0.0.0:${port}`);
-});
+repositoryApi(app);
+scheduler(app);
+conversationBot(app);
 
-require('./src')(server, app);
+module.exports = app;

@@ -12,20 +12,16 @@ const fakeRepository = {
 };
 
 describe('validator',  function () {
-    let client;
-    let db;
 
     // Set up database
     beforeAll(async () => {
-        client = await mongodb();
-        db = await client.db(databaseName + '-test');
+        await mongodb.connect(databaseName + '-test');
     });
 
     afterAll(async () => {
         try {
-
-            await db.collection("repositories").drop();
-            await client.close(true);
+            await mongodb.db.collection("repositories").drop();
+            await mongodb.client.close(true);
         } catch (error) {
             throw error;
         }
@@ -33,101 +29,101 @@ describe('validator',  function () {
 
     afterEach(async () => {
         try {
-            await db.collection("repositories").remove();
+            await mongodb.db.collection("repositories").remove();
         } catch (error) {
             throw error;
         }
     });
 
     test('should handle empty command and return \"Empty message\"', async () => {
-        const result = await handleConversation(null, db);
+        const result = await handleConversation(null, mongodb.db);
         expect(result).toBe("Empty message");
     });
 
     test('should return list of available commands if invalid command is given', async () => {
-        const result = await handleConversation({ text: 'invalid' }, db);
+        const result = await handleConversation({ text: 'invalid' }, mongodb.db);
         expect(result).toContain("Valid commands:");
     });
 
     test('should return list of available commands if /help command is given', async () => {
-        const result = await handleConversation({ text: '/help' }, db);
+        const result = await handleConversation({ text: '/help' }, mongodb.db);
         expect(result).toContain("Valid commands:");
     });
 
     test('should return list of available commands if unrecognized command is given', async () => {
-        const result = await handleConversation({ text: '/invalid' }, db);
+        const result = await handleConversation({ text: '/invalid' }, mongodb.db);
         expect(result).toContain("Valid commands:");
     });
 
     test('should return test data if /test command is given', async () => {
-        const result = await handleConversation({ text: '/test' }, db);
+        const result = await handleConversation({ text: '/test' }, mongodb.db);
         expect(result).toContain("Test CMD recived: test. Params: ");
     });
 
     test('should return test data if /test command is given with params', async () => {
-        const result = await handleConversation({ text: '/test my fake params' }, db);
+        const result = await handleConversation({ text: '/test my fake params' }, mongodb.db);
         expect(result).toContain("Test CMD recived: test. Params: my fake params");
     });
 
     test('should return watch-list if /list command is given', async () => {
-        const result = await handleConversation({ text: '/list' }, db);
+        const result = await handleConversation({ text: '/list' }, mongodb.db);
         expect(result).toContain("<strong>Here's your watch list:</strong>");
     });
 
     test('should fail to add repository if /add command is given with empty URL', async () => {
-        const result = await handleConversation({ text: '/add' }, db);
+        const result = await handleConversation({ text: '/add' }, mongodb.db);
         expect(result).toContain("No valid url was given");
     });
 
     test('should fail to add repository if /add command is given with invalid URL', async () => {
-        const result = await handleConversation({ text: '/add not-a-valid-url' }, db);
+        const result = await handleConversation({ text: '/add not-a-valid-url' }, mongodb.db);
         expect(result).toContain("Invalid URL given: not-a-valid-url");
     });
 
     test('should fail to add repository if /add command is given with invalid Github URL', async () => {
-        const result = await handleConversation({ text: '/add https://github.com/fechy/github-releases-notifier' }, db);
+        const result = await handleConversation({ text: '/add https://github.com/fechy/github-releases-notifier' }, mongodb.db);
         expect(result).toContain("Invalid URL given");
     });
 
     test('should add repository to watch-list if /add command is given', async () => {
-        const result = await handleConversation({ text: `/add ${fakeRepository.url}` }, db);
+        const result = await handleConversation({ text: `/add ${fakeRepository.url}` }, mongodb.db);
         expect(result).toContain("added to the list");
     });
 
     test('should continue silently to add repository to watch-list if already exist', async () => {
         const newRepo = Object.assign({}, fakeRepository);
-        await db.collection("repositories").insert(newRepo);
+        await mongodb.db.collection("repositories").insert(newRepo);
 
-        const result = await handleConversation({ text: `/add ${fakeRepository.url}` }, db);
-        expect(result).toContain("added to the list");
+        const result = await handleConversation({ text: `/add ${fakeRepository.url}` }, mongodb.db);
+        expect(result).toContain(`${fakeRepository.repository} already exists`);
     });
 
     test('should fail if /remove command is given with no params', async () => {
-        const result = await handleConversation({ text: `/remove` }, db);
+        const result = await handleConversation({ text: `/remove` }, mongodb.db);
         expect(result).toContain("No repository given");
     });
 
     test('should fail to remove repository from watch-list if no valid repository is given', async () => {
-        const result = await handleConversation({ text: `/remove not-a-repo` }, db);
+        const result = await handleConversation({ text: `/remove not-a-repo` }, mongodb.db);
         expect(result).toContain("not-a-repo is not a valid repository");
     });
 
     test('should fail to remove repository from watch-list if repository is not in the watch list', async () => {
-        const result = await handleConversation({ text: `/remove valid/repo` }, db);
+        const result = await handleConversation({ text: `/remove valid/repo` }, mongodb.db);
         expect(result).toContain("valid/repo is not in the watch-list");
     });
 
     test('should remove repository from watch-list if /remove command is given', async () => {
         const newRepo = Object.assign({}, fakeRepository);
-        await db.collection("repositories").insert(newRepo);
+        await mongodb.db.collection("repositories").insert(newRepo);
 
-        const prevCount = await db.collection('repositories').find({ repository: fakeRepository.repository }).count();
+        const prevCount = await mongodb.db.collection('repositories').find({ repository: fakeRepository.repository }).count();
         expect(prevCount).toBe(1);
 
-        const result = await handleConversation({ text: `/remove ${fakeRepository.repository}` }, db);
+        const result = await handleConversation({ text: `/remove ${fakeRepository.repository}` }, mongodb.db);
         expect(result).toContain(`${fakeRepository.repository} removed from the watch list`);
 
-        const afterCount = await db.collection('repositories').find({ repository: fakeRepository.repository }).count();
+        const afterCount = await mongodb.db.collection('repositories').find({ repository: fakeRepository.repository }).count();
         expect(afterCount).toBe(0);
     });
 });

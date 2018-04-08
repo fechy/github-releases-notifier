@@ -1,7 +1,9 @@
 const getter = require('./getter');
 const normalizer = require('../tools/normalizer');
 
-module.exports = async (client, db, server, app) => {
+const mongodb = require('./mongodb');
+
+module.exports = async (server, app) => {
     
     const io = require('socket.io')(server);
 
@@ -22,7 +24,7 @@ module.exports = async (client, db, server, app) => {
                 const result = await getter(request.url);
                 const normalized = normalizer(result);
 
-                const collection = await db.collection('repositories').findOne({ repository: normalized.repository });
+                const collection = await mongodb.db.collection('repositories').findOne({ repository: normalized.repository });
 
                 io.emit('scrap:result', {
                     feed: normalized,

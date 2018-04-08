@@ -1,29 +1,17 @@
 const mongodb = require('./backend/mongodb');
+const socket  = require('./backend/socket');
 
-const { databaseName } = require('./config');
-
-const scheduler       = require('./backend/scheduler');
-const socket          = require('./backend/socket');
-const database        = require('./backend/database');
-const conversationBot = require('./backend/conversation.bot');
-
-const setupEndpoints = async (server, app) => {
-    // Set up database
-    const client = await mongodb();
-    const db = client.db(databaseName);
-
-    // Ensure we have the needed collection
+module.exports = async (server, app) => {
+    
     try {
-        const collection = await db.createCollection('repositories');
-        await collection.ensureIndex({ repository:1 }, { unique:true });
+        await mongodb.connect();
     } catch (err) {
         console.error(err);
+        process.exit(1);
     }
 
-    socket(client, db, server, app);
-    database(client, db, app);
-    scheduler(client, db, app);
-    conversationBot(app, db);
-}
+    socket(server, app);
 
-module.exports = setupEndpoints;
+    process.on('exit', mongodb.closeHandler);
+    process.on('SIGINT', mongodb.closeHandler);
+}

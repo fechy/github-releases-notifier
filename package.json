@@ -5,8 +5,7 @@
   "main": "index.js",
   "scripts": {
     "build": "webpack --mode production",
-    "start": "node index.js",
-    "worker": "node src/tools/worker.js",
+    "start": "node server.js",
     "dev": "webpack --watch",
     "start:dev": "npm-run-all --parallel dev start",
     "test": "jest --config=test/jest.config.js"

@@ -1,13 +1,15 @@
 const route = require('koa-route');
 const assert = require('assert');
 
+const mongodb = require('./mongodb');
+
 const { isValidRepository } = require('../tools/validator');
 const { getList, getTotal, removeOne } = require('./watchlist');
 
 const repositoryAdd = require('./repository.add');
 const repositoryRemove = require('./repository.remove');
 
-module.exports = async (client, db, app) => {
+module.exports = async (app) => {
 
     // Build API endpoints
     app.use(route.get('/api/db-status', async ctx => {
@@ -21,7 +23,7 @@ module.exports = async (client, db, app) => {
         ctx.set('Content-type', 'application/json');
 
         try {
-            const collections = await getList(db);
+            const collections = await getList(mongodb.db);
             ctx.body = { 
                 collections 
             };
@@ -46,7 +48,7 @@ module.exports = async (client, db, app) => {
                 throw new Error(`${repository} is not a valid repository`);
             }
 
-            const totalEntries = await getTotal(db, repository);
+            const totalEntries = await getTotal(mongodb.db, repository);
             ctx.body = { 
                 exists: totalEntries > 0 
             };
@@ -67,7 +69,7 @@ module.exports = async (client, db, app) => {
         const { repository } = request;
 
         try {
-            const result = await repositoryRemove(db, request.repository);
+            const result = await repositoryRemove(mongodb.db, request.repository);
             ctx.body = { 
                 result 
             };
@@ -87,7 +89,7 @@ module.exports = async (client, db, app) => {
         ctx.set('Content-type', 'application/json');
 
         try {
-            const result = await repositoryAdd(db, url);
+            const result = await repositoryAdd(mongodb.db, url);
             ctx.body = { 
                 status: result 
             };
