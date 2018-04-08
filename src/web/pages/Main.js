@@ -53,13 +53,13 @@ class Main extends React.PureComponent
     async _handleScrapResult(data) {
         if (data) {
             try {
-                const result = await doesRepositoryExist(data.repository);
-
-                const { exists, error } = result.body;
+                const result = await doesRepositoryExist(data.feed.repository);
+                const exists = data.internal != null;
 
                 this.setState({ 
                     loading: false, 
-                    error, data, 
+                    error: null,
+                    data, 
                     exists
                 });
             } catch (error) {
@@ -84,7 +84,7 @@ class Main extends React.PureComponent
     }
 
     async storeUrl() {
-        const { url, updated_at } = this.state.data
+        const { url, updated_at } = this.state.data.feed
 
         const data = {
             url,
@@ -109,7 +109,7 @@ class Main extends React.PureComponent
 
             this.setState({ 
                 status,
-                error: error ? error.errmsg : null,
+                error,
                 data: null
             });
         } catch (error) {
@@ -142,7 +142,7 @@ class Main extends React.PureComponent
                             {this.renderError()}
                         </div>
                         <br />
-                        <FeedData loading={this.state.loading} feed={this.state.data} />
+                        <FeedData loading={this.state.loading} data={this.state.data} />
                         <br />
                         <WorkerConfig />
                         <BotStatus />

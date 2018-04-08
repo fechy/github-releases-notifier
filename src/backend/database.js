@@ -25,10 +25,11 @@ module.exports = async (client, db, app) => {
             ctx.body = { 
                 collections 
             };
-        } catch (err) {
+        } catch (error) {
+            const errorMessage = error.message ? error.message : error;
             ctx.body = { 
-                collections: [], 
-                error: err 
+                error: errorMessage,
+                collections: []
             };
         }
     }));
@@ -49,9 +50,11 @@ module.exports = async (client, db, app) => {
             ctx.body = { 
                 exists: totalEntries > 0 
             };
-        } catch (err) {
+        } catch (error) {
+            const errorMessage = error.message ? error.message : error;
             ctx.body = { 
-                exists: false, error: err 
+                error: errorMessage,
+                exists: false
             };
         }
     }));
@@ -69,14 +72,15 @@ module.exports = async (client, db, app) => {
                 result 
             };
         } catch (error) {
+            const errorMessage = error.message ? error.message : error;
             ctx.body = { 
-                error,
+                error: errorMessage,
                 result: false
             };
         }
     }));
 
-    app.use(route.post('/api/store-url', async ctx => {
+    app.use(route.post('/api/add', async ctx => {
         
         const url = ctx.request.body.url;
 
@@ -88,8 +92,9 @@ module.exports = async (client, db, app) => {
                 status: result 
             };
         } catch (error) {
+            const errorMessage = error.message ? error.message : error;
             ctx.body = { 
-                error,
+                error: errorMessage,
                 status: false 
             };
         }

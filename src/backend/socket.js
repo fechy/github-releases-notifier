@@ -20,7 +20,14 @@ module.exports = async (client, db, server, app) => {
     
             try {
                 const result = await getter(request.url);
-                io.emit('scrap:result', normalizer(result));
+                const normalized = normalizer(result);
+
+                const collection = await db.collection('repositories').findOne({ repository: normalized.repository });
+
+                io.emit('scrap:result', {
+                    feed: normalized,
+                    internal: collection
+                });
             } catch (err) {
                 io.emit('scrap:error', { status: err.status, message: err.message });
             }

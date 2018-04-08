@@ -5,7 +5,7 @@ export const doesRepositoryExist = async (repository) => {
 };
 
 export const storeRepository = async (repositoryData) => {
-    return await request.post('/api/store-url', repositoryData);
+    return await request.post('/api/add', repositoryData);
 };
 
 export const getWatchList = async () => {
