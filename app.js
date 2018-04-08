@@ -6,14 +6,15 @@ const bodyParser = require('koa-bodyparser');
 const Koa = require('koa');
 
 const scheduler       = require('./src/backend/scheduler');
-const socket          = require('./src/backend/socket');
 const repositoryApi   = require('./src/backend/repository.api');
 const conversationBot = require('./src/backend/conversation.bot');
 
 const app = new Koa();
 
-// Logger
-app.use(logger());
+if (process.env.ENV != 'test') {
+    // Logger
+    app.use(logger());
+}
 
 // Body parser
 app.use(bodyParser());

@@ -11,17 +11,23 @@ const dbService = {
     db: undefined,
     client: undefined,
     connect: async (dbName) => {
-        if (dbService.client == undefined) {
+        if (dbService.client == undefined || dbService.db == undefined) {
             dbService.client = await MongoClient.connect(url, { poolSize: 10 });
-            dbService.db = dbService.client.db(dbName ? dbName : databaseName);
 
-            // Ensure we have the needed collection
-            try {
-                const collection = await dbService.db.createCollection('repositories');
-                await collection.ensureIndex({ repository:1 }, { unique:true });
-            } catch (err) {
-                console.error(err);
+            let database = dbName ? dbName : databaseName;
+            if (process.env.ENV == 'test' && !database.endsWith('-test')) {
+                database += '-test';
             }
+
+            dbService.db = dbService.client.db(database);
+        }
+
+        // Ensure we have the needed collection
+        try {
+            const collection = await dbService.db.createCollection('repositories');
+            await collection.ensureIndex({ repository:1 }, { unique:true });
+        } catch (err) {
+            console.error(err);
         }
     },
     closeHandler: async () => {

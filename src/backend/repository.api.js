@@ -54,6 +54,7 @@ module.exports = async (app) => {
             };
         } catch (error) {
             const errorMessage = error.message ? error.message : error;
+            ctx.status = 400;
             ctx.body = { 
                 error: errorMessage,
                 exists: false
@@ -71,9 +72,10 @@ module.exports = async (app) => {
         try {
             const result = await repositoryRemove(mongodb.db, request.repository);
             ctx.body = { 
-                result 
+                result: result.deletedCount == 1
             };
         } catch (error) {
+            ctx.status = 400;
             const errorMessage = error.message ? error.message : error;
             ctx.body = { 
                 error: errorMessage,
@@ -91,9 +93,10 @@ module.exports = async (app) => {
         try {
             const result = await repositoryAdd(mongodb.db, url);
             ctx.body = { 
-                status: result 
+                status: result._id != null 
             };
         } catch (error) {
+            ctx.status = 400;
             const errorMessage = error.message ? error.message : error;
             ctx.body = { 
                 error: errorMessage,
