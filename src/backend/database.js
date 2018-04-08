@@ -9,14 +9,6 @@ const repositoryRemove = require('./repository.remove');
 
 module.exports = async (client, db, app) => {
 
-    // Make sure we have the collection
-    try {
-        const collection = await db.createCollection('repositories');
-        await collection.ensureIndex({ repository:1 }, { unique:true });
-    } catch (err) {
-        console.error(err);
-    }
-
     // Build API endpoints
     app.use(route.get('/api/db-status', async ctx => {
         ctx.set('Content-type', 'application/json');

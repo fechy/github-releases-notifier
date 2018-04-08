@@ -12,6 +12,14 @@ const setupEndpoints = async (server, app) => {
     const client = await mongodb();
     const db = client.db(databaseName);
 
+    // Ensure we have the needed collection
+    try {
+        const collection = await db.createCollection('repositories');
+        await collection.ensureIndex({ repository:1 }, { unique:true });
+    } catch (err) {
+        console.error(err);
+    }
+
     socket(client, db, server, app);
     database(client, db, app);
     scheduler(client, db, app);
