@@ -9,8 +9,6 @@ module.exports = async (url) => {
     if (!url.endsWith('.atom')) {
         url = `${url}.atom`;
     }
-    
-    console.log(`Scrapping: ${url}`);
 
     const result = await request.get(url).responseType('text');
     return promisify(parser.parseString)(result.body.toString());

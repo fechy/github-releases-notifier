@@ -29,7 +29,7 @@ Make sure you have created a `.env` file based on the `.env.template` file.
 Open `.env` and change the values accordingly.
 This 2 can be a little tricky:
 
-```
+```bash
 TELEGRAM_TOKEN
 TELEGRAM_CHAT_ID
 ```
@@ -61,6 +61,20 @@ npm run start
 ```
 
 Note that this application requires to be left running in the background for scheduling the routine checks.
+
+## Conversation Bot
+
+Sometimes is easier to let a bot do the things for you. So now you can use your Telegram Bot to run commands directly from your Telegram.
+
+Available commands:
+
+* **/list** - Returns the list of watched repositories.
+* **/add** - Adds a new repository to the watch list.
+* **/remove** - Removes a repository from the watch list.
+* **/test** - Tests this bot.
+* **/help** - Prints this list.
+
+Covers most of the options you can do from the UI but the comodity of not having to open your browser.
 
 ## Limitations and known issues
 

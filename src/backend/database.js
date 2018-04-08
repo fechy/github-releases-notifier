@@ -1,6 +1,12 @@
 const route = require('koa-route');
 const assert = require('assert');
 
+const { isValidRepository } = require('../tools/validator');
+const { getList, getTotal, removeOne } = require('./watchlist');
+
+const repositoryAdd = require('./repository.add');
+const repositoryRemove = require('./repository.remove');
+
 module.exports = async (client, db, app) => {
 
     // Make sure we have the collection
@@ -23,7 +29,7 @@ module.exports = async (client, db, app) => {
         ctx.set('Content-type', 'application/json');
 
         try {
-            const collections = await db.collection('repositories').find().toArray();
+            const collections = await getList(db);
             ctx.body = JSON.stringify({ collections });
         } catch (err) {
             ctx.body = JSON.stringify({ collections: [], error: err });
@@ -35,8 +41,14 @@ module.exports = async (client, db, app) => {
 
         ctx.set('Content-type', 'application/json');
 
+        const { repository } = request;
+
         try {
-            const totalEntries = await db.collection('repositories').find({ repository: request.repository }).count();
+            if (!isValidRepository(repository)) {
+                throw new Error(`${repository} is not a valid repository`);
+            }
+
+            const totalEntries = await getTotal(db, repository);
             ctx.body = JSON.stringify({ exists: totalEntries > 0 });
         } catch (err) {
             ctx.body = JSON.stringify({ exists: false, error: err });
@@ -48,8 +60,10 @@ module.exports = async (client, db, app) => {
 
         ctx.set('Content-type', 'application/json');
 
+        const { repository } = request;
+
         try {
-            const result = await db.collection('repositories').deleteOne({ repository: request.repository });
+            const result = await repositoryRemove(db, request.repository);
             ctx.body = JSON.stringify({ result });
         } catch (err) {
             ctx.body = JSON.stringify({ result: false, error: err });
@@ -57,19 +71,13 @@ module.exports = async (client, db, app) => {
     }));
 
     app.use(route.post('/api/store-url', async ctx => {
-        const request = ctx.request.body;
-
-        const entry = {
-            repository: request.repository,
-            url: request.url,
-            last_updated: request.last_updated,
-            last_check_at: null
-        }
+        
+        const url = ctx.request.body.url;
 
         ctx.set('Content-type', 'application/json');
 
         try {
-            const result = await db.collection('repositories').insertOne(entry, { repository: 1, keepGoing: true });
+            const result = await repositoryAdd(db, url);
             ctx.body = JSON.stringify({ status: result });
         } catch (error) {
             ctx.body = JSON.stringify({ status: false, error });

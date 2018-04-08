@@ -7,11 +7,13 @@ const token = process.env.TELEGRAM_TOKEN || null;
 const chatId = process.env.TELEGRAM_CHAT_ID || null;
 
 const bot = new Bot({
-  token: token
+  token: token,
+  parseCommand: false
 });
 
 const sendMessage = (text) => bot.sendMessage({ chat_id: chatId, text: text, parse_mode: 'HTML' });
 
 module.exports = {
+    bot,
     sendMessage
 }

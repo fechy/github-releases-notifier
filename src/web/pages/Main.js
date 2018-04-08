@@ -18,6 +18,7 @@ import Input from '../components/Input';
 import FeedData from '../components/FeedData';
 import WatchList from '../components/WatchList';
 import WorkerConfig from '../components/WorkerConfig';
+import BotStatus from '../components/BotStatus';
 
 import SocketContext from '../context';
 
@@ -127,7 +128,6 @@ class Main extends React.PureComponent
         return (
             <React.Fragment>
                 <h1 className="title"><FontAwesomeIcon icon={faGithubAlt} /> Github Release Notifier</h1>
-                <WorkerConfig />
                 <div className="main-container">
                     <WatchList ref="watch-list" socket={this.props.socket} />
                     <div className="form-container">
@@ -143,6 +143,9 @@ class Main extends React.PureComponent
                         </div>
                         <br />
                         <FeedData loading={this.state.loading} feed={this.state.data} />
+                        <br />
+                        <WorkerConfig />
+                        <BotStatus />
                     </div>
                 </div>
             </React.Fragment>
