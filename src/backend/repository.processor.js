@@ -7,22 +7,25 @@ module.exports = async (db, rawFeed) => {
     
     const normalized = normalizer(rawFeed);
 
-    const { repository, updated_at } = normalized;
+    const { repository, updated_at, entries } = normalized;
 
     const collection = await db.collection('repositories').findOne({ repository });
     if (!collection) {
         throw new Error(notFoundMessage(repository));
     }
 
+    // Ignore repositories with no releases yet
     const lastUpdatedTime = new Date(collection.last_updated).getTime();
     const newUpdatedTime  = new Date(updated_at).getTime();
 
-    const hasNewRelease = (lastUpdatedTime < newUpdatedTime);
+    const hasNewRelease = (entries > 0 && lastUpdatedTime < newUpdatedTime);
 
-    // Lets update the values
-    collection.last_check_at = new Date().toISOString();
+    // Update last release date
     collection.last_updated = updated_at;
 
+    // Update the last check date
+    collection.last_check_at = new Date().toISOString();
+    
     await db.collection('repositories').update({ _id: collection._id }, collection);
 
     return hasNewRelease;
