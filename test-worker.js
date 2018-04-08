@@ -10,7 +10,7 @@ const setup = async () => {
 
     const worker = require('./src/backend/worker');
 
-    worker(client, db, true);
+    worker(client, db, true, true);
 };
 
 setup();
