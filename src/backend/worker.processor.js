@@ -1,15 +1,32 @@
 const processor = require('./repository.processor');
 const getter = require('./getter');
 
-module.exports = async (db) => {
+const nothingNewMessage = (repository) => (
+    `Nothing new for ${repository}`
+)
+
+const newReleaseMessage = (repository) => (
+    `Found a new release for ${repository}!`
+);
+
+const notFoundMessage = (repository) => (
+    `${repository} not found`
+);
+
+module.exports = async (db, sendMessageForNotFound) => {
     const collections = await db.collection('repositories').find().toArray();
     const messages = await Promise.all(collections.map( async repo =>
     {
         const processedXml = await getter(repo.url);
         const result = await processor(db, processedXml);
+
+        if (result) {
+            return newReleaseMessage(repo.repository);
+        } 
         
-        return result;
+
+        return sendMessageForNotFound ? nothingNewMessage(repo.repository) : null;
     }));
 
-    return messages;
+    return messages.filter(msg => msg != null);
 }

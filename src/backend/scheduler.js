@@ -2,6 +2,8 @@ const route = require('koa-route');
 
 const schedule = require('node-schedule');
 
+const { sendMessagesForNotFoundReleases } = require('../config');
+
 const worker = require('./worker');
 
 /**
@@ -15,7 +17,7 @@ module.exports = (client, db, app) => {
 
     // Create worker
     let scheduleTime = process.env.CRON_TIME || '0 0/6 * * *';
-    const job = schedule.scheduleJob(scheduleTime, () => worker(client, db, false));
+    const job = schedule.scheduleJob(scheduleTime, () => worker(client, db, false, sendMessagesForNotFoundReleases));
 
     // Set up endpoints for modifying the worker
     app.use(route.get('/api/cron-time', async ctx => {

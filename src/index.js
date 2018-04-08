@@ -13,7 +13,7 @@ const setupEndpoints = async (server, app) => {
 
     socket(client, db, server, app);
     database(client, db, app);
-    scheduler(client, db, app, false);
+    scheduler(client, db, app);
 }
 
 module.exports = setupEndpoints;

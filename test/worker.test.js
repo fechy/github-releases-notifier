@@ -50,9 +50,18 @@ describe('worker',  function () {
         const newRepo = Object.assign({}, fakeRepository);
         await db.collection("repositories").insert(newRepo);
         
-        const messages = await messageProcessor(db);
+        const messages = await messageProcessor(db, true);
         expect(messages).toHaveLength(1);
         expect(messages[0]).toEqual('Nothing new for fechy/github-releases-notifier');
+    });
+
+    test('messages should return no nothing message if there is no new release and the no return not found message flag is false', async () =>
+    {
+        const newRepo = Object.assign({}, fakeRepository);
+        await db.collection("repositories").insert(newRepo);
+        
+        const messages = await messageProcessor(db, false);
+        expect(messages).toHaveLength(0);
     });
 
     test('messages should a new release found message if there is a new release', async () =>
@@ -72,7 +81,7 @@ describe('worker',  function () {
         const newRepo = Object.assign({}, fakeRepository);
         await db.collection("repositories").insertOne(newRepo);
         
-        const messages = await messageProcessor(db);
+        const messages = await messageProcessor(db, true);
         expect(messages).toHaveLength(1);
 
         const collection = await db.collection("repositories").findOne({ repository: fakeRepository.repository });

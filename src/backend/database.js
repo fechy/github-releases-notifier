@@ -69,7 +69,7 @@ module.exports = async (client, db, app) => {
         ctx.set('Content-type', 'application/json');
 
         try {
-            const result = await db.collection('repositories').insert(entry, { repository: 1, keepGoing: true });
+            const result = await db.collection('repositories').insertOne(entry, { repository: 1, keepGoing: true });
             ctx.body = JSON.stringify({ status: result });
         } catch (error) {
             ctx.body = JSON.stringify({ status: false, error });
