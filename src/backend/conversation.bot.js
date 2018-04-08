@@ -14,7 +14,7 @@ const startBot = () => {
             console.error({ err });
         }).start();
     } catch (err) {
-        console.err({ BOT_ERROR: err });
+        console.error(err);
     }
 }
 
@@ -49,7 +49,9 @@ module.exports = (app) => {
         bot.stop();
         botStatus = false;
 
-        ctx.body = { status: botStatus };
+        ctx.body = {
+            status: botStatus
+        };
     }));
 
     const exitHandler = () => {

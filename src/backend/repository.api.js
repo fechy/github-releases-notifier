@@ -28,6 +28,7 @@ module.exports = async (app) => {
                 collections 
             };
         } catch (error) {
+            ctx.status = 400;
             const errorMessage = error.message ? error.message : error;
             ctx.body = { 
                 error: errorMessage,
