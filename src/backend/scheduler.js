@@ -23,11 +23,11 @@ module.exports = (client, db, app) => {
     app.use(route.get('/api/cron-time', async ctx => {
         ctx.set('Content-type', 'application/json');
 
-        ctx.body = JSON.stringify({
+        ctx.body = {
             status: true,
             code: scheduleTime,
             next: job.nextInvocation()
-        });
+        };
     }));
 
     app.use(route.post('/api/cron-time', async ctx => {
@@ -40,10 +40,10 @@ module.exports = (client, db, app) => {
 
         const status = job.reschedule(scheduleTime);
 
-        ctx.body = JSON.stringify({
+        ctx.body = {
             status: status,
             code: scheduleTime,
             next: job.nextInvocation()
-        });
+        };
     }));
 };

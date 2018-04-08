@@ -20,9 +20,9 @@ module.exports = async (client, db, app) => {
     // Build API endpoints
     app.use(route.get('/api/db-status', async ctx => {
         ctx.set('Content-type', 'application/json');
-        ctx.body = JSON.stringify({
+        ctx.body = {
             status: true
-        });
+        };
     }));
 
     app.use(route.get('/api/watch-list', async ctx => {
@@ -30,9 +30,14 @@ module.exports = async (client, db, app) => {
 
         try {
             const collections = await getList(db);
-            ctx.body = JSON.stringify({ collections });
+            ctx.body = { 
+                collections 
+            };
         } catch (err) {
-            ctx.body = JSON.stringify({ collections: [], error: err });
+            ctx.body = { 
+                collections: [], 
+                error: err 
+            };
         }
     }));
 
@@ -49,9 +54,13 @@ module.exports = async (client, db, app) => {
             }
 
             const totalEntries = await getTotal(db, repository);
-            ctx.body = JSON.stringify({ exists: totalEntries > 0 });
+            ctx.body = { 
+                exists: totalEntries > 0 
+            };
         } catch (err) {
-            ctx.body = JSON.stringify({ exists: false, error: err });
+            ctx.body = { 
+                exists: false, error: err 
+            };
         }
     }));
 
@@ -64,9 +73,14 @@ module.exports = async (client, db, app) => {
 
         try {
             const result = await repositoryRemove(db, request.repository);
-            ctx.body = JSON.stringify({ result });
-        } catch (err) {
-            ctx.body = JSON.stringify({ result: false, error: err });
+            ctx.body = { 
+                result 
+            };
+        } catch (error) {
+            ctx.body = { 
+                error,
+                result: false
+            };
         }
     }));
 
@@ -78,9 +92,14 @@ module.exports = async (client, db, app) => {
 
         try {
             const result = await repositoryAdd(db, url);
-            ctx.body = JSON.stringify({ status: result });
+            ctx.body = { 
+                status: result 
+            };
         } catch (error) {
-            ctx.body = JSON.stringify({ status: false, error });
+            ctx.body = { 
+                error,
+                status: false 
+            };
         }
     }));
 }
