@@ -2,31 +2,31 @@ const route = require('koa-route');
 
 const mongodb = require('./mongodb');
 
-const { bot, sendMessage } = require('../tools/bot');
+const BotService = require('../tools/bot');
 const { getList, getTotal, removeOne, addOne } = require('./watchlist');
 
 const handleConversation = require('./conversations');
 
-const startBot = () => {
-    try {
-        bot.on('message', (message) => handleConversation(message, mongodb.db))
-        .on('error', (err) => {
+const startBot = async () => {
+    if (!BotService.isInitiated()) {
+        BotService.init();
+        BotService.on('message', (message) => handleConversation(message, mongodb.db));
+        BotService.on('error', (err) => {
             console.error({ err });
-        }).start();
-    } catch (err) {
-        console.error(err);
+        });
     }
+
+    const result = await BotService.start();
+
+    return result != undefined;
 }
 
 module.exports = (app) => {
 
-    let botStatus = false;
-
     app.use(route.get('/api/bot-status', async (ctx) => {
-
         ctx.set('Content-type', 'application/json');
         ctx.body = { 
-            status: botStatus,
+            status: BotService.getStatus(),
         };
     }));
 
@@ -34,29 +34,32 @@ module.exports = (app) => {
 
         ctx.set('Content-type', 'application/json');
 
-        if (!botStatus) {
-            startBot();
-            botStatus = true;
+        const status = startBot();
+        if (status) {
+            ctx.body = { status };    
+        } else {
+            ctx.code = 400;
+            ctx.body = { error: 'Failed to start bot' };
         }
-
-        ctx.body = { status: botStatus };
     }));
 
     app.use(route.get('/api/bot-stop', async (ctx) => {
 
         ctx.set('Content-type', 'application/json');
 
-        bot.stop();
-        botStatus = false;
+        await BotService.stop();
 
         ctx.body = {
-            status: botStatus
+            status: BotService.getStatus()
         };
     }));
 
-    const exitHandler = () => {
-        console.log('Stoping conversation bot');
-        bot.stop();
+    const exitHandler = async () => {
+        try {
+            await BotService.stop();
+        } catch (err) {
+            console.error(err);
+        }
         process.exit();
     }
 

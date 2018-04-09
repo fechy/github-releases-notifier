@@ -2,6 +2,7 @@
  * Controls a Telegram Bot to send a message
  */
 const Bot = require('node-telegram-bot');
+const { promisify } = require('util');
 
 const config = require('../config');
 
@@ -12,14 +13,53 @@ if (config.environment != 'test' && (!token || !chatId)) {
   console.error('Telegram Bot can\'t be started without a valid token or chat id');
 }
 
-const bot = new Bot({
-  token: token,
-  parseCommand: false
-});
+ const service = {
+  bot: undefined,
+  status: false,
+  init: function () {
+    if (service.bot == undefined) {
+      service.bot = new Bot({
+        token: token,
+        parseCommand: false
+      });
+    }
 
-const sendMessage = (text) => bot.sendMessage({ chat_id: chatId, text: text, parse_mode: 'HTML' });
+    return service.bot;
+  },
 
-module.exports = {
-    bot,
-    sendMessage
-}
+  isInitiated: () => {
+    return service.bot != undefined;
+  },
+
+  getStatus: () => {
+    return service.bot != undefined && service.status;
+  },
+
+  sendMessage: (text) => {
+    return service.bot.sendMessage({ chat_id: chatId, text: text, parse_mode: 'HTML' });
+  },
+
+  on: (event, callback) => {
+    return service.bot.on(event, callback);
+  },
+
+  start: async () => {
+    if (!service.status) {
+      promisify(service.bot.start.bind(service.bot))();
+      service.status = true;
+    }
+
+    return service.bot;
+  },
+
+  stop: async () => {
+    if (service.status) {
+      promisify(service.bot.stop.bind(service.bot))();
+      service.status = false;
+    }
+
+    return service.bot;
+  }
+};
+
+module.exports = service;
