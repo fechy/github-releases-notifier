@@ -66,7 +66,7 @@ class Main extends React.PureComponent
                     exists
                 });
             } catch (error) {
-                this.setState({ loading: false, error });
+                this.setState({ loading: false, error: error.message });
             }
         }
     }
@@ -120,7 +120,9 @@ class Main extends React.PureComponent
         }
     }
 
-
+    componentDidCatch(error, info) {
+        this.setState({ error: `APPLICATION ERROR: ${error.message}` });
+    }
 
     renderError() {
         if (this.state.error) {
@@ -134,29 +136,34 @@ class Main extends React.PureComponent
             <React.Fragment>
                 <h1 className="title"><FontAwesomeIcon icon={faGithubAlt} /> Github Release Notifier</h1>
                 <div className="main-container">
+                    
                     <SocketContext.Consumer>
                         {(socket) => <WatchList ref={ref => this.watchList = ref} socket={socket} />}
                     </SocketContext.Consumer>
+
                     <div className="form-container">
                         <div className="container-small">
+
                             <Input ref={ref => this.input = ref} 
                                 validator={isValidUrl} 
                                 placeholder={`https://github.com/author/repository/releases`}
                             />
+
                             <Button color="primary" onClick={this._handleAnalize} disabled={this.state.loading}>
                                 <FontAwesomeIcon icon={faSearch} />
                             </Button>
+
                             <Button color="info" onClick={this.storeUrl} disabled={!canWatch}>
                                 <FontAwesomeIcon icon={faEye} />
                             </Button>
+
                             {this.renderError()}
                         </div>
-                        <br />
+                        
                         <FeedData loading={this.state.loading} data={this.state.data} />
-                        <br />
+
                         <WorkerConfig />
                         <BotStatus />
-                        <input value={this.state.value} onChange={(e) => this.setState({ value: e.target.value })} />
                     </div>
                 </div>
             </React.Fragment>

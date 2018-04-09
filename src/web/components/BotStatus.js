@@ -5,6 +5,7 @@ import moment from 'moment';
 import FontAwesomeIcon from '@fortawesome/react-fontawesome';
 import faStop from '@fortawesome/fontawesome-free-solid/faStop';
 import faPlay from '@fortawesome/fontawesome-free-solid/faPlay';
+import faTelegramPlane from '@fortawesome/fontawesome-free-brands/faTelegramPlane';
 import { Alert, Button } from 'reactstrap';
 
 class BotStatus extends React.PureComponent
@@ -13,7 +14,8 @@ class BotStatus extends React.PureComponent
         super(props);
 
         this.state = {
-            status: false
+            status: false,
+            error: null
         };
 
         this._handleGetStatus = this._handleGetStatus.bind(this);
@@ -31,7 +33,7 @@ class BotStatus extends React.PureComponent
             const result = await request.get('/api/bot-status');
             this.setState({ status: result.body.status });
         } catch (err) {
-            console.error(err);
+            this.setState({ error: err.message });
         }
     }
 
@@ -40,7 +42,7 @@ class BotStatus extends React.PureComponent
             const result = await request.get('/api/bot-start');
             this.setState({ status: result.body.status });
         } catch (err) {
-            console.error(err);
+            this.setState({ error: err.message });
         }
     }
 
@@ -49,7 +51,7 @@ class BotStatus extends React.PureComponent
             const result = await request.get('/api/bot-stop');
             this.setState({ status: result.body.status });
         } catch (err) {
-            console.error(err);
+            this.setState({ error: err.message });
         }
     }
 
@@ -71,11 +73,18 @@ class BotStatus extends React.PureComponent
 
     render () {
         return (
-            <Alert color="info" className="worker-container">
-                <div className={classnames("worker-status", this.state.status ? "running" : "stopped")} />
-                <div className="worker-data">Telegram bot is {this.state.status ? 'running' : 'not running'}</div>
-                {this.renderButtons()}
-            </Alert>
+            <React.Fragment>
+                {this.state.error && <Alert color="danger">{this.state.error}</Alert>}
+                <Alert color="info" className="worker-container">
+                    
+                    <div className={classnames("worker-status", this.state.status ? "running" : "stopped")}>
+                        <FontAwesomeIcon icon={faTelegramPlane} />
+                    </div>
+
+                    <div className="worker-data">Telegram bot is {this.state.status ? 'running' : 'not running'}</div>
+                    {this.renderButtons()}
+                </Alert>
+            </React.Fragment>
         )
     }
 }

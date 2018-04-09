@@ -91,12 +91,19 @@ input[type=text]:focus {
 }
 
 .worker-status {
+    text-align: center;
     display: inline-block;
-    width: 25px;
-    height: 25px;
+    width: 30px;
+    height: 30px;
     margin: 5px;
+    line-height: 31px;
+    color: #FFF;
     background-color:#F00;
     border-radius: 50%;
+}
+
+.data-container {
+    margin: 20px 0;
 }
 
 .worker-status.stopped {

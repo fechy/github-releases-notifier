@@ -34,7 +34,9 @@ class FeedData extends React.PureComponent
                 {entries > 0 ? this._renderData() : <Alert color="warning">This repository doesnt have any published release yet</Alert>}
                 <hr />
                 <div>
-                    <div><strong>Repository URL</strong>: <a href={url} target="_blank" >{url}</a></div>
+                    <div>
+                        <strong>Repository URL</strong>: <a href={url} target="_blank" >{url}</a>
+                    </div>
                     {this._renderWatchedData()}
                 </div>
             </React.Fragment>
@@ -50,9 +52,11 @@ class FeedData extends React.PureComponent
     _renderWatchedData() {
         if (this.props.data.internal) {
             const { last_check_at } = this.props.data.internal;
+
+            const lastCheckDateToShow = last_check_at ? moment(last_check_at).format(DATE_FORMAT) : 'Never';
             return (
                 <div>
-                    <div><strong>Last check:</strong> {last_check_at ? moment(last_check_at).format(DATE_FORMAT) : 'Never'} </div>
+                    <div><strong>Last check:</strong> {lastCheckDateToShow} </div>
                 </div>
             );
         }
