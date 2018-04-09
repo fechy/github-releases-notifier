@@ -8,7 +8,7 @@ const config = require('../config');
 const token = process.env.TELEGRAM_TOKEN || null;
 const chatId = process.env.TELEGRAM_CHAT_ID || null;
 
-if (config.environment != 'test' && (!token || chatId)) {
+if (config.environment != 'test' && (!token || !chatId)) {
   console.error('Telegram Bot can\'t be started without a valid token or chat id');
 }
 
