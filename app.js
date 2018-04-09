@@ -5,13 +5,15 @@ const serve = require('koa-static');
 const bodyParser = require('koa-bodyparser');
 const Koa = require('koa');
 
+const config = require('./src/config');
+
 const scheduler       = require('./src/backend/scheduler');
 const repositoryApi   = require('./src/backend/repository.api');
 const conversationBot = require('./src/backend/conversation.bot');
 
 const app = new Koa();
 
-if (process.env.ENV != 'test') {
+if (config.environment != 'test') {
     // Logger
     app.use(logger());
 }
