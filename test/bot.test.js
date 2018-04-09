@@ -11,7 +11,7 @@ const fakeRepository = {
     last_updated: new Date('2017-11-21T00:00:00').toISOString()
 };
 
-describe('validator',  function () {
+describe('bot',  function () {
 
     // Set up database
     beforeAll(async () => {
@@ -90,12 +90,12 @@ describe('validator',  function () {
         expect(result).toContain("added to the list");
     });
 
-    test('should continue silently to add repository to watch-list if already exist', async () => {
+    test('should fail to add repository to watch-list if already exist', async () => {
         const newRepo = Object.assign({}, fakeRepository);
         await mongodb.db.collection("repositories").insert(newRepo);
 
-        const result = await handleConversation({ text: `/add ${fakeRepository.url}` }, mongodb.db);
-        expect(result).toContain(`${fakeRepository.repository} already exists`);
+        const result = await handleConversation({ text: `/add ${newRepo.url}` }, mongodb.db);
+        expect(result).toContain(`${newRepo.repository} already exists`);
     });
 
     test('should fail if /remove command is given with no params', async () => {
