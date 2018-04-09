@@ -3,17 +3,16 @@ const { isValidUrl } = require('../tools/validator');
 const normalizer = require('../tools/normalizer');
 const getter = require('./getter');
 
-const createNewEntry = function (normalized) {
-    return {
-        repository:    normalized.repository,
-        url:           normalized.url,
-        last_updated:  normalized.last_updated,
+const createNewEntry = normalized => (
+    {
+        repository: normalized.repository,
+        url: normalized.url,
+        last_updated: normalized.last_updated,
         last_check_at: null
-    };
-}
+    }
+);
 
 module.exports = async (db, url) => {
-
     if (!url || !isValidUrl(url)) {
         throw new Error(`Invalid URL given: ${url}`);
     }
@@ -38,10 +37,10 @@ module.exports = async (db, url) => {
 
         return entry;
     } catch (err) {
-        if (err.code == '11000') {
+        if (err.code === 11000) {
             throw new Error(`${entry.repository} already exists`);
         }
 
         throw err;
     }
-}
+};

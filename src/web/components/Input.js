@@ -1,8 +1,8 @@
 import React from 'react';
+import PropTypes from 'prop-types';
 import classnames from 'classnames';
 
-class Input extends React.PureComponent
-{
+class Input extends React.PureComponent {
     constructor(props) {
         super(props);
 
@@ -14,16 +14,16 @@ class Input extends React.PureComponent
         this._handleOnChange = this._handleOnChange.bind(this);
     }
 
+    getValue() {
+        return this.state.value;
+    }
+
     _handleOnChange(e) {
         const { validator } = this.props;
-        const value = e.target.value; 
+        const { value } = e.target;
         const isValid = validator ? validator(value) : true;
 
         this.setState({ value, isValid });
-    }
-
-    getValue() {
-        return this.state.value;
     }
 
     clearValue() {
@@ -31,20 +31,35 @@ class Input extends React.PureComponent
     }
 
     render() {
-        const { id, className } = this.props;
+        const { className } = this.props;
         const { isValid, value } = this.state;
 
-        const classes = classnames("input-url", !isValid && value != "" ? "invalid" : null, className);
+        const classes = classnames("input-url", !isValid && value !== "" ? "invalid" : null, className);
 
         return (
-            <input type="text" 
-                   className={classes}
-                   value={value} 
-                   onChange={this._handleOnChange}
-                   placeholder={this.props.placeholder}
+            <input
+                type="text"
+                className={classes}
+                value={value}
+                onChange={this._handleOnChange}
+                placeholder={this.props.placeholder}
             />
-        )
+        );
     }
 }
+
+Input.defaultProps = {
+    value: '',
+    placeholder: '',
+    className: null,
+    validator: null
+};
+
+Input.propTypes = {
+    value: PropTypes.string,
+    validator: PropTypes.func,
+    placeholder: PropTypes.string,
+    className: PropTypes.string,
+};
 
 export default Input;

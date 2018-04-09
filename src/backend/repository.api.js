@@ -1,43 +1,41 @@
 const route = require('koa-route');
-const assert = require('assert');
 
 const mongodb = require('./mongodb');
 
 const { isValidRepository } = require('../tools/validator');
-const { getList, getTotal, removeOne } = require('./watchlist');
+const { getList, getTotal } = require('./watchlist');
 
 const repositoryAdd = require('./repository.add');
 const repositoryRemove = require('./repository.remove');
 
 module.exports = async (app) => {
-
     // Build API endpoints
-    app.use(route.get('/api/db-status', async ctx => {
+    app.use(route.get('/api/db-status', async (ctx) => {
         ctx.set('Content-type', 'application/json');
         ctx.body = {
             status: true
         };
     }));
 
-    app.use(route.get('/api/watch-list', async ctx => {
+    app.use(route.get('/api/watch-list', async (ctx) => {
         ctx.set('Content-type', 'application/json');
 
         try {
             const collections = await getList(mongodb.db);
-            ctx.body = { 
-                collections 
+            ctx.body = {
+                collections
             };
         } catch (error) {
             ctx.status = 400;
             const errorMessage = error.message ? error.message : error;
-            ctx.body = { 
+            ctx.body = {
                 error: errorMessage,
                 collections: []
             };
         }
     }));
 
-    app.use(route.post('/api/exists', async ctx => {
+    app.use(route.post('/api/exists', async (ctx) => {
         const request = ctx.request.body;
 
         ctx.set('Content-type', 'application/json');
@@ -50,20 +48,20 @@ module.exports = async (app) => {
             }
 
             const totalEntries = await getTotal(mongodb.db, repository);
-            ctx.body = { 
-                exists: totalEntries > 0 
+            ctx.body = {
+                exists: totalEntries > 0
             };
         } catch (error) {
             const errorMessage = error.message ? error.message : error;
             ctx.status = 400;
-            ctx.body = { 
+            ctx.body = {
                 error: errorMessage,
                 exists: false
             };
         }
     }));
 
-    app.use(route.post('/api/remove', async ctx => {
+    app.use(route.post('/api/remove', async (ctx) => {
         const request = ctx.request.body;
 
         ctx.set('Content-type', 'application/json');
@@ -71,38 +69,37 @@ module.exports = async (app) => {
         const { repository } = request;
 
         try {
-            const result = await repositoryRemove(mongodb.db, request.repository);
-            ctx.body = { 
-                result: result.deletedCount == 1
+            const result = await repositoryRemove(mongodb.db, repository);
+            ctx.body = {
+                result: result.deletedCount === 1
             };
         } catch (error) {
             ctx.status = 400;
             const errorMessage = error.message ? error.message : error;
-            ctx.body = { 
+            ctx.body = {
                 error: errorMessage,
                 result: false
             };
         }
     }));
 
-    app.use(route.post('/api/add', async ctx => {
-        
-        const url = ctx.request.body.url;
+    app.use(route.post('/api/add', async (ctx) => {
+        const { url } = ctx.request.body;
 
         ctx.set('Content-type', 'application/json');
 
         try {
             const result = await repositoryAdd(mongodb.db, url);
-            ctx.body = { 
-                status: result._id != null 
+            ctx.body = {
+                status: result._id != null
             };
         } catch (error) {
             ctx.status = 400;
             const errorMessage = error.message ? error.message : error;
-            ctx.body = { 
+            ctx.body = {
                 error: errorMessage,
-                status: false 
+                status: false
             };
         }
     }));
-}
+};

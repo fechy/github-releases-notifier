@@ -7,7 +7,7 @@ const server = app.listen(port, (err) => {
     if (err) {
         console.error({ err });
     }
-    
+
     console.log(`Go to: http://0.0.0.0:${port}`);
 });
 

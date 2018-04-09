@@ -8,19 +8,21 @@ const worker = require('./worker');
 
 /**
  * Set ups the backend enpoints
- * 
- * @param {MongoClient} client 
- * @param {MongoDatabase} db 
- * @param {Koa} app 
+ *
+ * @param {MongoClient} client
+ * @param {MongoDatabase} db
+ * @param {Koa} app
  */
 module.exports = (app) => {
-
     // Create worker
     let scheduleTime = process.env.CRON_TIME || '0 0/6 * * *';
-    const job = schedule.scheduleJob(scheduleTime, () => worker(false, sendMessagesForNotFoundReleases));
+    const job = schedule.scheduleJob(scheduleTime, () => worker(
+        false,
+        sendMessagesForNotFoundReleases
+    ));
 
     // Set up endpoints for modifying the worker
-    app.use(route.get('/api/cron-time', async ctx => {
+    app.use(route.get('/api/cron-time', async (ctx) => {
         ctx.set('Content-type', 'application/json');
 
         ctx.body = {
@@ -30,8 +32,7 @@ module.exports = (app) => {
         };
     }));
 
-    app.use(route.post('/api/cron-time', async ctx => {
-        
+    app.use(route.post('/api/cron-time', async (ctx) => {
         const request = ctx.request.body;
 
         ctx.set('Content-type', 'application/json');
@@ -41,7 +42,7 @@ module.exports = (app) => {
         const status = job.reschedule(scheduleTime);
 
         ctx.body = {
-            status: status,
+            status,
             code: scheduleTime,
             next: job.nextInvocation()
         };

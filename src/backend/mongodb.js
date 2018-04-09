@@ -1,6 +1,6 @@
-const MongoClient = require('mongodb').MongoClient;
+const { MongoClient } = require('mongodb');
 
-const { databaseName } = require('../config');
+const { databaseName, environment } = require('../config');
 
 const host = process.env.MONGO_HOST || 'localhost';
 
@@ -11,11 +11,11 @@ const dbService = {
     db: undefined,
     client: undefined,
     connect: async (dbName) => {
-        if (dbService.client == undefined || dbService.db == undefined) {
+        if (dbService.client === undefined || dbService.db === undefined) {
             dbService.client = await MongoClient.connect(url, { poolSize: 10 });
 
-            let database = dbName ? dbName : databaseName;
-            if (process.env.ENV == 'test' && !database.endsWith('-test')) {
+            let database = dbName || databaseName;
+            if (environment === 'test' && !database.endsWith('-test')) {
                 database += '-test';
             }
 
@@ -25,7 +25,7 @@ const dbService = {
         // Ensure we have the needed collection
         try {
             const collection = await dbService.db.createCollection('repositories');
-            await collection.ensureIndex({ repository:1 }, { unique:true });
+            await collection.ensureIndex({ repository: 1 }, { unique: true });
         } catch (err) {
             console.error(err);
         }
@@ -33,6 +33,6 @@ const dbService = {
     closeHandler: async () => {
         await dbService.client.close(true);
     }
-}
+};
 
 module.exports = dbService;

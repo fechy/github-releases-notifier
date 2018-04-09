@@ -1,21 +1,18 @@
 import React from 'react';
-import ReactDOM from 'react-dom';
 
 import Main from './pages/Main';
-
 import SocketContext from './context';
 
-class App extends React.PureComponent
-{
+class App extends React.PureComponent {
     constructor(props) {
         super(props);
 
         this.state = {
             error: null
-        }
+        };
     }
 
-    componentDidCatch(error, info) {
+    componentDidCatch(error) {
         this.setState({ error: `APPLICATION ERROR: ${error.message}` });
     }
 
@@ -27,7 +24,7 @@ class App extends React.PureComponent
                     { socket => <Main socket={socket} />}
                 </SocketContext.Consumer>
             </div>
-        )
+        );
     }
 }
 

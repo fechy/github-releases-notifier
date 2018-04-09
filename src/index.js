@@ -1,8 +1,7 @@
 const mongodb = require('./backend/mongodb');
-const socket  = require('./backend/socket');
+const socket = require('./backend/socket');
 
 module.exports = async (server, app) => {
-    
     try {
         await mongodb.connect();
     } catch (err) {
@@ -14,4 +13,4 @@ module.exports = async (server, app) => {
 
     process.on('exit', mongodb.closeHandler);
     process.on('SIGINT', mongodb.closeHandler);
-}
+};

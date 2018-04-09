@@ -4,12 +4,15 @@ const { promisify } = require('util');
 
 const parser = new xml2js.Parser();
 
-module.exports = async (url) => {
-    
+const urlDecorator = (url) => {
     if (!url.endsWith('.atom')) {
-        url = `${url}.atom`;
+        return `${url}.atom`;
     }
 
-    const result = await request.get(url).responseType('text');
+    return url;
+};
+
+module.exports = async (url) => {
+    const result = await request.get(urlDecorator(url)).responseType('text');
     return promisify(parser.parseString)(result.body.toString());
 };

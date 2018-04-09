@@ -1,13 +1,12 @@
-const { getList, getTotal, removeOne } = require('../watchlist');
+const { getList } = require('../watchlist');
 const { sendMessage } = require('../../tools/bot');
-const { isValidRepository } = require('../../tools/validator');
 
 const repositoryAdd = require('../repository.add');
 const repositoryRemove = require('../repository.remove');
 
 const pattern = /^\/([a-z0-9]*)[\s]{0,}(.{0,})/i;
 
-const resolveCommand = function (command) {
+const resolveCommand = (command) => {
     if (command.startsWith('/')) {
         const cmd = command.match(pattern);
         return {
@@ -17,7 +16,7 @@ const resolveCommand = function (command) {
     }
 
     return null;
-}
+};
 
 const helpCmd = () => {
     const message = [];
@@ -28,9 +27,9 @@ const helpCmd = () => {
     message.push(`/test - Tests this bot`);
 
     return message.join("\r\n");
-}
+};
 
-const invalidCmd = function (cmd) {
+const invalidCmd = (cmd) => {
     const message = [];
     if (cmd != null) {
         message.push(`Invalid command received: ${cmd.action}`);
@@ -42,11 +41,9 @@ const invalidCmd = function (cmd) {
     message.push(helpCmd());
 
     return message.join("\r\n");
-}
+};
 
-const resolveTestCmd = function (cmd) {
-    return `Test CMD recived: ${cmd.action}. Params: ${cmd.params}`;
-}
+const resolveTestCmd = cmd => `Test CMD recived: ${cmd.action}. Params: ${cmd.params}`;
 
 const resolveListCmd = async (cmd, db) => {
     let message = [];
@@ -54,23 +51,22 @@ const resolveListCmd = async (cmd, db) => {
         message.push(`<strong>Here's your watch list:</strong>`);
 
         const list = await getList(db);
-        const repositories = list.map( collection => `- ${collection.repository}` );
+        const repositories = list.map(collection => `- ${collection.repository}`);
         message = message.concat(repositories);
     } catch (err) {
         message.push(`<strong>Error processing your list:</strong> ${err}`);
     }
 
     return message.join("\r\n");
-}
+};
 
 const resolveAddCmd = async (cmd, db) => {
-
     try {
         const url = cmd.params;
         if (!url) {
             throw new Error(`No valid url was given`);
         }
-        
+
         const result = await repositoryAdd(db, url);
         if (!result) {
             return `${url} failed to be added to the list`;
@@ -80,7 +76,7 @@ const resolveAddCmd = async (cmd, db) => {
     } catch (error) {
         return error.message ? error.message : error;
     }
-}
+};
 
 const resolveRemoveCmd = async (cmd, db) => {
     try {
@@ -110,33 +106,33 @@ module.exports = async (message, db) => {
         const cmd = resolveCommand(message.text);
         if (cmd) {
             switch (cmd.action) {
-                case 'test':
-                    responseMsg = resolveTestCmd(cmd);
-                    break;
+            case 'test':
+                responseMsg = resolveTestCmd(cmd);
+                break;
 
-                case 'list':
-                    responseMsg = await resolveListCmd(cmd, db);
-                    break;
+            case 'list':
+                responseMsg = await resolveListCmd(cmd, db);
+                break;
 
-                case 'add':
-                    responseMsg = await resolveAddCmd(cmd, db);
-                    break;
+            case 'add':
+                responseMsg = await resolveAddCmd(cmd, db);
+                break;
 
-                case 'remove':
-                    responseMsg = await resolveRemoveCmd(cmd, db);
-                    break;
+            case 'remove':
+                responseMsg = await resolveRemoveCmd(cmd, db);
+                break;
 
-                case 'start':
-                    responseMsg = 'This bot is already started';
-                    break;
+            case 'start':
+                responseMsg = 'This bot is already started';
+                break;
 
-                case 'help':
-                    responseMsg = helpCmd();
-                    break;
-                    
-                default:
-                    responseMsg = invalidCmd(cmd);
-                    break;
+            case 'help':
+                responseMsg = helpCmd();
+                break;
+
+            default:
+                responseMsg = invalidCmd(cmd);
+                break;
             }
         } else {
             responseMsg = invalidCmd(cmd);
@@ -144,7 +140,7 @@ module.exports = async (message, db) => {
 
         return await sendMessage(responseMsg);
     } catch (err) {
-        let errorMessage = err.message ? err.message : err;
-        return await sendMessage(errorMessage);
+        const errorMessage = err.message ? err.message : err;
+        return sendMessage(errorMessage);
     }
 };

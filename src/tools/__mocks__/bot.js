@@ -1,17 +1,15 @@
 const bot = {
-    start: function () {
+    start() {
 
     },
-    stop: function () {
+    stop() {
 
     }
 };
-  
-const sendMessage = (text) => {
-    return Promise.resolve(text);
-}
+
+const sendMessage = text => Promise.resolve(text);
 
 module.exports = {
     bot,
     sendMessage
-}
+};

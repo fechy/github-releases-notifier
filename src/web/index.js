@@ -1,14 +1,14 @@
 import React from 'react';
 import ReactDOM from 'react-dom';
+import 'bootstrap/dist/css/bootstrap.min.css';
 
 import App from './App';
+import SocketContext from './context';
 
-import 'bootstrap/dist/css/bootstrap.min.css';
 import './styles/style.css';
 
+/* global io */
 const socket = io('http://localhost:3000');
-
-import SocketContext from './context';
 
 const Index = () => (
     <SocketContext.Provider value={socket}>

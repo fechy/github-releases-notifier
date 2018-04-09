@@ -5,10 +5,10 @@ const mongodb = require('./mongodb');
 
 /**
  * Worker for scrapping the release info
- * 
- * @param {MongoClient} client 
- * @param {MongoDatabase} db 
- * @param {boolean} closeOnFinish 
+ *
+ * @param {MongoClient} client
+ * @param {MongoDatabase} db
+ * @param {boolean} closeOnFinish
  */
 module.exports = async (closeOnFinish, sendMessageForNotFound) => {
     try {

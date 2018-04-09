@@ -11,11 +11,10 @@ const fakeRepository = {
     last_updated: new Date('2017-11-21T00:00:00').toISOString()
 };
 
-describe('bot',  function () {
-
+describe('bot', () => {
     // Set up database
     beforeAll(async () => {
-        await mongodb.connect(databaseName + '-test');
+        await mongodb.connect(`${databaseName}-test`);
     });
 
     afterAll(async () => {
@@ -35,7 +34,7 @@ describe('bot',  function () {
         }
     });
 
-    test('should handle empty command and return \"Empty message\"', async () => {
+    test('should handle empty command and return "Empty message"', async () => {
         const result = await handleConversation(null, mongodb.db);
         expect(result).toBe("Empty message");
     });

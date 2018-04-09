@@ -3,9 +3,9 @@ import request from 'superagent';
 import classnames from 'classnames';
 import moment from 'moment';
 
-import FontAwesomeIcon from '@fortawesome/react-fontawesome'
-import faEdit from '@fortawesome/fontawesome-free-solid/faEdit'
-import faClock from '@fortawesome/fontawesome-free-solid/faClock'
+import FontAwesomeIcon from '@fortawesome/react-fontawesome';
+import faEdit from '@fortawesome/fontawesome-free-solid/faEdit';
+import faClock from '@fortawesome/fontawesome-free-solid/faClock';
 
 import { Alert, Button, Modal, ModalBody, ModalHeader, ModalFooter } from 'reactstrap';
 
@@ -13,16 +13,11 @@ import Input from '../components/Input';
 
 const cronCheckTimeInterval = 60000; // every minute
 
-const validateCron = function (entry) {
-    return /^(?:[1-9]?\d|\*)(?:(?:[\/-][1-9]?\d)|(?:,[1-9]?\d)+)?$/.test(entry);
-};
+const validateCron = entry => /^(?:[1-9]?\d|\*)(?:(?:[/-][1-9]?\d)|(?:,[1-9]?\d)+)?$/.test(entry);
 
 const DATE_FORMAT = 'LLLL';
 
-class WorkerConfig extends React.PureComponent
-{
-    input;
-
+class WorkerConfig extends React.PureComponent {
     constructor() {
         super();
 
@@ -34,7 +29,9 @@ class WorkerConfig extends React.PureComponent
             modal_opened: false
         };
 
-        this._checkWorkerTime      = this._checkWorkerTime.bind(this);
+        this.input = React.createRef();
+
+        this._checkWorkerTime = this._checkWorkerTime.bind(this);
         this._handleChangeCronTime = this._handleChangeCronTime.bind(this);
     }
 
@@ -47,10 +44,10 @@ class WorkerConfig extends React.PureComponent
         try {
             const response = await request.get('/api/cron-time');
             const { body } = response;
-            this.setState({ 
-                error: null, 
+            this.setState({
+                error: null,
                 code: body.code,
-                status: body.status, 
+                status: body.status,
                 next_execution: moment(body.next).format(DATE_FORMAT)
             });
         } catch (err) {
@@ -59,15 +56,16 @@ class WorkerConfig extends React.PureComponent
     }
 
     async _handleChangeCronTime() {
-        const time = this.input.getValue();
+        const time = this.input.current.getValue();
 
         try {
             const response = await request.post('/api/cron-time', { time });
             const { body } = response;
-            this.setState({ 
-                error: null, 
+
+            this.setState({
+                error: null,
                 status: body.status,
-                code: body.code, 
+                code: body.code,
                 next_execution: moment(body.next).format(DATE_FORMAT),
                 modal_opened: false
             });
@@ -76,16 +74,15 @@ class WorkerConfig extends React.PureComponent
         }
     }
 
-    renderModal () {
-        const codeForUrl = this.state.code.split(/\s/).join('_');
+    renderModal() {
         return (
             <Modal isOpen={this.state.modal_opened}>
                 <ModalHeader>Edit Schedule</ModalHeader>
                 <ModalBody style={{ textAlign: 'center' }}>
                     <div>Enter a valid cron-like code</div>
-                    <Input ref={ref => this.input = ref} className="text-center" value={this.state.code} placeholder={'* * * * *'} validator={validateCron} />
+                    <Input ref={this.input} className="text-center" value={this.state.code} placeholder="* * * * *" validator={validateCron} />
                     <div>
-                        <small>You can check on <a href={`https://crontab.guru/#*_*_*_*_*`}>https://crontab.guru/#*_*_*_*_*</a> how to do it</small>
+                        <small>You can check on <a href="https://crontab.guru/#*_*_*_*_*">https://crontab.guru/#*_*_*_*_*</a> how to do it</small>
                     </div>
                 </ModalBody>
                 <ModalFooter>
@@ -93,7 +90,7 @@ class WorkerConfig extends React.PureComponent
                     <Button color="danger" onClick={this._handleChangeCronTime}>SET</Button>
                 </ModalFooter>
             </Modal>
-        )
+        );
     }
 
     render() {
@@ -103,11 +100,11 @@ class WorkerConfig extends React.PureComponent
                 {this.state.error && <Alert color="danger">{this.state.error}</Alert>}
 
                 <Alert color="primary" className="worker-container">
-                    
+
                     <div className={classnames("worker-status", this.state.status ? "running" : "stopped")}>
                         <FontAwesomeIcon icon={faClock} />
                     </div>
-                    
+
                     <div className="worker-data">Next execution scheduled: {this.state.next_execution}</div>
 
                     <Button color="primary" onClick={() => this.setState({ modal_opened: true })} >
@@ -115,7 +112,7 @@ class WorkerConfig extends React.PureComponent
                     </Button>
                 </Alert>
             </div>
-        )
+        );
     }
 }
 

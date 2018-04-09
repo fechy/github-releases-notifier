@@ -1,15 +1,14 @@
 import React from 'react';
 import request from 'superagent';
 import classnames from 'classnames';
-import moment from 'moment';
+
 import FontAwesomeIcon from '@fortawesome/react-fontawesome';
 import faStop from '@fortawesome/fontawesome-free-solid/faStop';
 import faPlay from '@fortawesome/fontawesome-free-solid/faPlay';
 import faTelegramPlane from '@fortawesome/fontawesome-free-brands/faTelegramPlane';
 import { Alert, Button } from 'reactstrap';
 
-class BotStatus extends React.PureComponent
-{
+class BotStatus extends React.PureComponent {
     constructor(props) {
         super(props);
 
@@ -61,22 +60,22 @@ class BotStatus extends React.PureComponent
                 <Button color="primary" onClick={this._handleStopBot} >
                     <FontAwesomeIcon icon={faStop} className="btn-icon" />
                 </Button>
-            )
+            );
         }
 
         return (
             <Button color="primary" onClick={this._handleStartBot} >
                 <FontAwesomeIcon icon={faPlay} className="btn-icon" />
             </Button>
-        )
+        );
     }
 
-    render () {
+    render() {
         return (
             <React.Fragment>
                 {this.state.error && <Alert color="danger">{this.state.error}</Alert>}
                 <Alert color="info" className="worker-container">
-                    
+
                     <div className={classnames("worker-status", this.state.status ? "running" : "stopped")}>
                         <FontAwesomeIcon icon={faTelegramPlane} />
                     </div>
@@ -85,7 +84,7 @@ class BotStatus extends React.PureComponent
                     {this.renderButtons()}
                 </Alert>
             </React.Fragment>
-        )
+        );
     }
 }
 

@@ -2,24 +2,22 @@ const getter = require('./getter');
 const normalizer = require('../tools/normalizer');
 
 const mongodb = require('./mongodb');
+const socketIO = require('socket.io');
 
-module.exports = async (server, app) => {
-    
-    const io = require('socket.io')(server);
+module.exports = async (server) => {
+    const io = socketIO(server);
 
     // Set socket.io listeners.
     io.on('connection', (socket) => {
-        
         console.log('Socket: user connected');
 
         socket.on('disconnect', () => {
             console.log('Socket: user disconnected');
         });
 
-        socket.on('scrap', async request => {
-            
+        socket.on('scrap', async (request) => {
             io.emit('scrap:start', { url: request.url });
-    
+
             try {
                 const result = await getter(request.url);
                 const normalized = normalizer(result);
@@ -35,4 +33,4 @@ module.exports = async (server, app) => {
             }
         });
     });
-}
+};

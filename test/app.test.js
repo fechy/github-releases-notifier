@@ -12,11 +12,10 @@ const fakeRepository = {
 
 jest.mock('../src/backend/getter');
 
-describe('app',  function ()
-{
+describe('app', () => {
     // Set up database
     beforeAll(async () => {
-        await mongodb.connect(databaseName + '-test');
+        await mongodb.connect(`${databaseName}-test`);
     });
 
     afterAll(async () => {
@@ -70,7 +69,7 @@ describe('app',  function ()
 
         done();
     });
-    
+
     test('It should return the watch-list with one repository', async (done) => {
         const newRepo = Object.assign({}, fakeRepository);
         await mongodb.db.collection("repositories").insert(newRepo);
@@ -85,9 +84,7 @@ describe('app',  function ()
     });
 
     test('It should return false and error if the repository is not in a valid format', async (done) => {
-
         const fakeRepoName = 'fake-author---fake-value';
-
         const response = await request(app.callback()).post('/api/exists').send({ repository: fakeRepoName });
 
         expect(response.status).toBe(400);
@@ -108,7 +105,6 @@ describe('app',  function ()
     });
 
     test('It should return true if the repository exist', async (done) => {
-
         const newRepo = Object.assign({}, fakeRepository);
         await mongodb.db.collection("repositories").insert(newRepo);
 
@@ -122,9 +118,7 @@ describe('app',  function ()
     });
 
     test('It should fail to remove a repository that has a invalid format', async (done) => {
-
         const fakeRepoName = 'fake-author---fake-value';
-
         const response = await request(app.callback()).post('/api/remove').send({ repository: fakeRepoName });
 
         expect(response.status).toBe(400);
@@ -135,9 +129,7 @@ describe('app',  function ()
     });
 
     test('It should fail to remove a repository that is not in the watch-list', async (done) => {
-
         const repoName = fakeRepository.repository;
-
         const response = await request(app.callback()).post('/api/remove').send({ repository: repoName });
 
         expect(response.status).toBe(400);
@@ -148,7 +140,6 @@ describe('app',  function ()
     });
 
     test('It should remove a repository that is in the watch-list', async (done) => {
-
         const newRepo = Object.assign({}, fakeRepository);
         await mongodb.db.collection("repositories").insert(newRepo);
 
@@ -162,9 +153,7 @@ describe('app',  function ()
     });
 
     test('It should fail to add a repository that has a invalid URL', async (done) => {
-
         const invalidUrl = 'https://github.com/fechy/github-releases-notifier';
-
         const response = await request(app.callback()).post('/api/add').send({ url: invalidUrl });
 
         expect(response.status).toBe(400);
@@ -175,9 +164,7 @@ describe('app',  function ()
     });
 
     test('It should add a repository that has a valid URL', async (done) => {
-
         const validUrl = fakeRepository.url;
-
         const response = await request(app.callback()).post('/api/add').send({ url: validUrl });
 
         expect(response.status).toBe(200);
@@ -188,7 +175,6 @@ describe('app',  function ()
     });
 
     test('It should fail to add a repository that already exists', async (done) => {
-
         const newRepo = Object.assign({}, fakeRepository);
         await mongodb.db.collection("repositories").insert(newRepo);
 

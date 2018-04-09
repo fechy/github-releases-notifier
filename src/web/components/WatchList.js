@@ -1,17 +1,13 @@
 import React from 'react';
-import moment from 'moment';
+import PropTypes from 'prop-types';
 
-import FontAwesomeIcon from '@fortawesome/react-fontawesome';
-import faInfoCircle from '@fortawesome/fontawesome-free-solid/faInfoCircle';
-import faTrash from '@fortawesome/fontawesome-free-solid/faTrash';
-import { Alert, ListGroup, ListGroupItem, Button, Tooltip } from 'reactstrap';
+import { Alert, ListGroup } from 'reactstrap';
 
 import { getWatchList, removeFromList } from '../actions';
 
 import WatchListItem from './WatchListItem';
 
-class WatchList extends React.PureComponent
-{
+class WatchList extends React.PureComponent {
     constructor(props) {
         super(props);
 
@@ -20,9 +16,9 @@ class WatchList extends React.PureComponent
             error: null
         };
 
-        this._renderItem           = this._renderItem.bind(this);
-        this._loadRepositoryData   = this._loadRepositoryData.bind(this);
-        this._loadWatchList        = this._loadWatchList.bind(this);
+        this._renderItem = this._renderItem.bind(this);
+        this._loadRepositoryData = this._loadRepositoryData.bind(this);
+        this._loadWatchList = this._loadWatchList.bind(this);
         this._deleteRepositoryData = this._deleteRepositoryData.bind(this);
     }
 
@@ -50,29 +46,29 @@ class WatchList extends React.PureComponent
     }
 
     async _deleteRepositoryData(repository) {
-        if (confirm(`Are you sure you want to stop watching ${repository.repository}?`)) {
+        if (confirm(`Are you sure you want to stop watching ${repository.repository}?`)) { // eslint-disable-line no-alert
             try {
-                const result = await removeFromList(repository.repository);
+                await removeFromList(repository.repository);
                 this._loadWatchList();
             } catch (error) {
-                this.setState({ error })
+                this.setState({ error });
             }
         }
     }
 
     _renderItem(repository) {
         return (
-            <WatchListItem key={repository.repository} 
-                            data={repository} 
-                            onLoad={this._loadRepositoryData} 
-                            onDelete={this._deleteRepositoryData} />
-        )
+            <WatchListItem
+                key={repository.repository}
+                data={repository}
+                onLoad={this._loadRepositoryData}
+                onDelete={this._deleteRepositoryData}
+            />
+        );
     }
 
     _renderAlert() {
-        if (this.state.error) {
-            return (<Alert color="alert">{this.state.error}</Alert>);
-        }
+        return (this.state.error && <Alert color="alert">{this.state.error}</Alert>);
     }
 
     render() {
@@ -83,8 +79,12 @@ class WatchList extends React.PureComponent
                 <h4>Watch List</h4>
                 <ListGroup>{ list.map(this._renderItem) }</ListGroup>
             </div>
-        )
+        );
     }
 }
+
+WatchList.propTypes = {
+    socket: PropTypes.instanceOf(Object).isRequired,
+};
 
 export default WatchList;
