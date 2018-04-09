@@ -31,7 +31,7 @@ const service = {
 
     getStatus: () => service.bot !== undefined && service.status,
 
-    sendMessage: text => service.bot.sendMessage({ chat_id: chatId, text, parse_mode: 'HTML' }),
+    sendMessage: text => service.init().sendMessage({ chat_id: chatId, text, parse_mode: 'HTML' }),
 
     on: (event, callback) => service.bot.on(event, callback),
 
