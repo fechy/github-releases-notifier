@@ -74,7 +74,6 @@ class Main extends React.PureComponent {
 
     _handleAnalize() {
         if (!this.state.loading) {
-            console.log(this.input);
             const value = this.input.current.getValue();
 
             if (value.length > 0 && isValidUrl(value)) {

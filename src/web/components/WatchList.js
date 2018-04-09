@@ -1,7 +1,7 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 
-import { Alert, ListGroup } from 'reactstrap';
+import { Alert, ListGroup, Button, Modal, ModalBody, ModalHeader, ModalFooter } from 'reactstrap';
 
 import { getWatchList, removeFromList } from '../actions';
 
@@ -13,9 +13,11 @@ class WatchList extends React.PureComponent {
 
         this.state = {
             list: [],
-            error: null
+            error: null,
+            modal: null
         };
 
+        this._ignoreModal = this._ignoreModal.bind(this);
         this._renderItem = this._renderItem.bind(this);
         this._loadRepositoryData = this._loadRepositoryData.bind(this);
         this._loadWatchList = this._loadWatchList.bind(this);
@@ -24,6 +26,19 @@ class WatchList extends React.PureComponent {
 
     componentDidMount() {
         this._loadWatchList();
+    }
+
+    _ignoreModal() {
+        this.setState({ modal: null });
+    }
+
+    _showRemoveModal(repository) {
+        const newModal = {
+            repository: repository.repository,
+            onConfirm: this._deleteRepositoryData.bind(this, repository)
+        };
+
+        this.setState({ modal: newModal });
     }
 
     async reloadList() {
@@ -46,13 +61,18 @@ class WatchList extends React.PureComponent {
     }
 
     async _deleteRepositoryData(repository) {
-        if (confirm(`Are you sure you want to stop watching ${repository.repository}?`)) { // eslint-disable-line no-alert
-            try {
-                await removeFromList(repository.repository);
-                this._loadWatchList();
-            } catch (error) {
-                this.setState({ error });
-            }
+        const { modal } = this.state;
+        if (!modal) {
+            this._showRemoveModal(repository);
+            return;
+        }
+
+        try {
+            await removeFromList(repository.repository);
+            this.setState({ modal: null });
+            this._loadWatchList();
+        } catch (error) {
+            this.setState({ error, modal: null });
         }
     }
 
@@ -71,14 +91,37 @@ class WatchList extends React.PureComponent {
         return (this.state.error && <Alert color="alert">{this.state.error}</Alert>);
     }
 
+    _renderModal() {
+        const { modal } = this.state;
+        if (modal) {
+            return (
+                <Modal isOpen={this.state.modal !== null}>
+                    <ModalHeader>Remove Repository</ModalHeader>
+                    <ModalBody style={{ textAlign: 'center' }}>
+                        <div>Are you sure you want to stop watching {modal.repository}?</div>
+                    </ModalBody>
+                    <ModalFooter>
+                        <Button color="info" onClick={this._ignoreModal}>CANCEL</Button>
+                        <Button color="danger" onClick={modal.onConfirm}>CONFIRM</Button>
+                    </ModalFooter>
+                </Modal>
+            );
+        }
+
+        return null;
+    }
+
     render() {
         const { list } = this.state;
         return (
-            <div className="watch-list">
-                {this._renderAlert()}
-                <h4>Watch List</h4>
-                <ListGroup>{ list.map(this._renderItem) }</ListGroup>
-            </div>
+            <React.Fragment>
+                {this._renderModal()}
+                <div className="watch-list">
+                    {this._renderAlert()}
+                    <h4>Watch List</h4>
+                    <ListGroup>{ list.map(this._renderItem) }</ListGroup>
+                </div>
+            </React.Fragment>
         );
     }
 }
