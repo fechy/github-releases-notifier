@@ -7,7 +7,7 @@ const createNewEntry = normalized => (
     {
         repository: normalized.repository,
         url: normalized.url,
-        last_updated: normalized.last_updated,
+        last_updated: normalized.updated_at,
         last_check_at: null
     }
 );
