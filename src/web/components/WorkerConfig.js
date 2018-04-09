@@ -18,6 +18,8 @@ const DATE_FORMAT = 'LLLL';
 
 class WorkerConfig extends React.PureComponent
 {
+    input;
+
     constructor() {
         super();
 
@@ -51,7 +53,7 @@ class WorkerConfig extends React.PureComponent
     }
 
     _handleChangeCronTime() {
-        const value = this.refs.input.getValue();
+        const value = this.input.getValue();
         request.post('/api/cron-time', { time: value })
         .end((err, res) => {
             this.setState({ 
@@ -72,7 +74,7 @@ class WorkerConfig extends React.PureComponent
                     <ModalHeader>Edit Schedule</ModalHeader>
                     <ModalBody style={{ textAlign: 'center' }}>
                         <div>Enter a valid cron-like code</div>
-                        <Input ref="input" className="text-center" value={this.state.code} placeholder={'* * * * *'} validator={validateCron} />
+                        <Input ref={ref => this.input = ref} className="text-center" value={this.state.code} placeholder={'* * * * *'} validator={validateCron} />
                         <div>
                             <small>You can check on <a href={`https://crontab.guru/#*_*_*_*_*`}>https://crontab.guru/#*_*_*_*_*</a> how to do it</small>
                         </div>

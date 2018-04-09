@@ -24,6 +24,9 @@ import SocketContext from '../context';
 
 class Main extends React.PureComponent
 {
+    input;
+    watchList;
+
     constructor(props) {
         super(props);
 
@@ -71,11 +74,11 @@ class Main extends React.PureComponent
     _handleAnalize () {
         if (!this.state.loading) {
             
-            const value = this.refs["input"].getValue();
+            const value = this.input.getValue();
 
             if (value.length > 0 && isValidUrl(value)) {
                 this.props.socket.emit('scrap', { 
-                    url: this.refs["input"].getValue()
+                    url: this.input.getValue()
                 });
             } else {
                 this.setState({ loading: false, error: "Invalid entry" });
@@ -102,8 +105,8 @@ class Main extends React.PureComponent
 
             const result = await storeRepository(data);
 
-            this.refs["watch-list"].reloadList();
-            this.refs["input"].clearValue();
+            this.watchList.reloadList();
+            this.input.clearValue();
 
             const { status, error } = result.body;
 
@@ -117,6 +120,8 @@ class Main extends React.PureComponent
         }
     }
 
+
+
     renderError() {
         if (this.state.error) {
             return <Alert color="danger" className="error-message">{this.state.error}</Alert>
@@ -129,10 +134,15 @@ class Main extends React.PureComponent
             <React.Fragment>
                 <h1 className="title"><FontAwesomeIcon icon={faGithubAlt} /> Github Release Notifier</h1>
                 <div className="main-container">
-                    <WatchList ref="watch-list" socket={this.props.socket} />
+                    <SocketContext.Consumer>
+                        {(socket) => <WatchList ref={ref => this.watchList = ref} socket={socket} />}
+                    </SocketContext.Consumer>
                     <div className="form-container">
                         <div className="container-small">
-                            <Input ref="input" validator={isValidUrl} placeholder={`https://github.com/author/repository/releases`} />
+                            <Input ref={ref => this.input = ref} 
+                                validator={isValidUrl} 
+                                placeholder={`https://github.com/author/repository/releases`}
+                            />
                             <Button color="primary" onClick={this._handleAnalize} disabled={this.state.loading}>
                                 <FontAwesomeIcon icon={faSearch} />
                             </Button>
@@ -146,6 +156,7 @@ class Main extends React.PureComponent
                         <br />
                         <WorkerConfig />
                         <BotStatus />
+                        <input value={this.state.value} onChange={(e) => this.setState({ value: e.target.value })} />
                     </div>
                 </div>
             </React.Fragment>
