@@ -8,7 +8,7 @@ import SocketContext from './context';
 import './styles/style.css';
 
 /* global io */
-const socket = io('http://localhost:3000');
+const socket = io();
 
 const Index = () => (
     <SocketContext.Provider value={socket}>
