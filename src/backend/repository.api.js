@@ -1,12 +1,12 @@
-const route = require('koa-route');
+import route from 'koa-route';
 
-const mongodb = require('./mongodb');
+import mongodb from './mongodb';
 
-const { isValidRepository } = require('../tools/validator');
-const { getList, getTotal } = require('./watchlist');
+import { isValidRepository } from '../tools/validator';
+import { getList, getTotal } from './watchlist';
 
-const repositoryAdd = require('./repository.add');
-const repositoryRemove = require('./repository.remove');
+import repositoryAdd from './repository.add';
+import repositoryRemove from './repository.remove';
 
 module.exports = async (app) => {
     // Build API endpoints

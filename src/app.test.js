@@ -1,8 +1,8 @@
-const request = require('supertest');
-const app = require('../app');
+import request from 'supertest';
+import app from '../app';
+import mongodb from './backend/mongodb';
 
-const { databaseName } = require('../src/config');
-const mongodb = require('../src/backend/mongodb');
+import { databaseName } from './config';
 
 const fakeRepository = {
     repository: 'fechy/github-releases-notifier',

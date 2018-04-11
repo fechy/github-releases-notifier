@@ -1,5 +1,5 @@
-const mongodb = require('./backend/mongodb');
-const socket = require('./backend/socket');
+import mongodb from './backend/mongodb';
+import socket from './backend/socket';
 
 module.exports = async (server, app) => {
     try {
@@ -9,8 +9,8 @@ module.exports = async (server, app) => {
         process.exit(1);
     }
 
-    socket(server, app);
-
     process.on('exit', mongodb.closeHandler);
     process.on('SIGINT', mongodb.closeHandler);
+
+    socket(server, app);
 };

@@ -2,7 +2,7 @@
  * Normalizes a XML scrapped from the atom feed to an object the application can use
  */
 
-const { getRepositoryURL } = require('./validator');
+import { getRepositoryURL } from './validator';
 
 module.exports = (rawFeed) => {
     const {

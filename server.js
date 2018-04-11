@@ -1,5 +1,5 @@
-const app = require('./app');
-const web = require('./src');
+import app from './app';
+import web from './src';
 
 const port = process.env.PORT || 3000;
 

@@ -1,3 +1,4 @@
+import "babel-polyfill";
 import request from 'superagent';
 
 export const doesRepositoryExist = async repository => request.post('/api/exists', { repository });

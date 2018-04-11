@@ -1,7 +1,6 @@
-const messageProcessor = require('./worker.processor');
-const messenger = require('./messenger');
-
-const mongodb = require('./mongodb');
+import messageProcessor from './worker.processor';
+import messenger from './messenger';
+import mongodb from './mongodb';
 
 /**
  * Worker for scrapping the release info

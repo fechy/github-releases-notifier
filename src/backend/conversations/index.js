@@ -1,8 +1,8 @@
-const { getList } = require('../watchlist');
-const { sendMessage } = require('../../tools/bot');
+import { getList } from '../watchlist';
+import { sendMessage } from '../../tools/bot';
 
-const repositoryAdd = require('../repository.add');
-const repositoryRemove = require('../repository.remove');
+import repositoryAdd from '../repository.add';
+import repositoryRemove from '../repository.remove';
 
 const pattern = /^\/([a-z0-9]*)[\s]{0,}(.{0,})/i;
 

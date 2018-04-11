@@ -1,8 +1,8 @@
-const route = require('koa-route');
+import route from 'koa-route';
 
-const mongodb = require('./mongodb');
-const BotService = require('../tools/bot');
-const handleConversation = require('./conversations');
+import mongodb from './mongodb';
+import BotService from '../tools/bot';
+import handleConversation from './conversations';
 
 const startBot = async () => {
     if (!BotService.isInitiated()) {

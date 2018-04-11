@@ -1,4 +1,4 @@
-const { sendMessage } = require('../tools/bot');
+import { sendMessage } from '../tools/bot';
 
 const getFullMessage = messages => `<strong>Github releases bot results:</strong>\r\n<pre>${messages}</pre>`;
 

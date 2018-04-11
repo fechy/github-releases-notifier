@@ -1,5 +1,5 @@
-const processor = require('./repository.processor');
-const getter = require('./getter');
+import processor from './repository.processor';
+import getter from './getter';
 
 const nothingNewMessage = repository => (
     `Nothing new for ${repository}`

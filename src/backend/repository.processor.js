@@ -1,4 +1,4 @@
-const normalizer = require('../tools/normalizer');
+import normalizer from '../tools/normalizer';
 
 const notFoundMessage = repository => `${repository} not found`;
 

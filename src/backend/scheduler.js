@@ -1,10 +1,8 @@
-const route = require('koa-route');
+import route from 'koa-route';
+import schedule from 'node-schedule';
 
-const schedule = require('node-schedule');
-
-const { sendMessagesForNotFoundReleases } = require('../config');
-
-const worker = require('./worker');
+import { sendMessagesForNotFoundReleases } from '../config';
+import worker from './worker';
 
 /**
  * Set ups the backend enpoints

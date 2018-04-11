@@ -1,4 +1,4 @@
-const { isValidUrl, getRepositoryURL } = require('../src/tools/validator');
+import { isValidUrl, getRepositoryURL } from './validator';
 
 describe('validator', () => {
     test('should fail if empty url', () => {

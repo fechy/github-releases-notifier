@@ -1,7 +1,7 @@
-const { databaseName } = require('../src/config');
+import { databaseName } from '../config';
 
-const mongodb = require('../src/backend/mongodb');
-const messageProcessor = require('../src/backend/worker.processor');
+import mongodb from './mongodb';
+import messageProcessor from './worker.processor';
 
 const fakeRepository = {
     repository: 'fechy/github-releases-notifier',
@@ -9,7 +9,7 @@ const fakeRepository = {
     last_updated: new Date('2017-11-21T00:00:00').toISOString()
 };
 
-jest.mock('../src/backend/getter');
+jest.mock('./getter');
 
 describe('worker', () => {
     // Set up database

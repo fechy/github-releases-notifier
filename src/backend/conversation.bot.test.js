@@ -1,9 +1,9 @@
-const handleConversation = require('../src/backend/conversations');
-const mongodb = require('../src/backend/mongodb');
+import handleConversation from './conversations';
+import mongodb from './mongodb';
 
-const { databaseName } = require('../src/config');
+import { databaseName } from '../config';
 
-jest.mock('../src/tools/bot');
+jest.mock('../tools/bot');
 
 const fakeRepository = {
     repository: 'fechy/github-releases-notifier',

@@ -1,7 +1,7 @@
-const { addOne } = require('./watchlist');
-const { isValidUrl } = require('../tools/validator');
-const normalizer = require('../tools/normalizer');
-const getter = require('./getter');
+import { isValidUrl } from '../tools/validator';
+import normalizer from '../tools/normalizer';
+import { addOne } from './watchlist';
+import getter from './getter';
 
 const createNewEntry = normalized => (
     {

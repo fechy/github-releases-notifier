@@ -1,10 +1,10 @@
 /**
  * Controls a Telegram Bot to send a message
  */
-const Bot = require('node-telegram-bot');
-const { promisify } = require('util');
+import Bot from 'node-telegram-bot';
+import { promisify } from 'util';
 
-const config = require('../config');
+import config from '../config';
 
 const token = process.env.TELEGRAM_TOKEN || null;
 const chatId = process.env.TELEGRAM_CHAT_ID || null;

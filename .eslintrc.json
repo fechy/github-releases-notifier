@@ -5,6 +5,16 @@
         "browser": true,
         "node": true
     },
+    "settings": {
+        "import/resolver": {
+            "node": {
+                "moduleDirectory": [
+                    "./src",
+                    "./node_modules"
+                ]
+            }
+        }
+    },
     "rules": {
         "semi": ["error", "always"],
         "quotes": ["off", "double"],

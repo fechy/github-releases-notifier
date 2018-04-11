@@ -1,6 +1,6 @@
-const request = require('superagent');
-const xml2js = require('xml2js');
-const { promisify } = require('util');
+import request from 'superagent';
+import xml2js from 'xml2js';
+import { promisify } from 'util';
 
 const parser = new xml2js.Parser();
 

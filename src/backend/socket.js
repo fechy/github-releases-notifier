@@ -1,8 +1,8 @@
-const getter = require('./getter');
-const normalizer = require('../tools/normalizer');
+import socketIO from 'socket.io';
+import getter from './getter';
+import normalizer from '../tools/normalizer';
 
-const mongodb = require('./mongodb');
-const socketIO = require('socket.io');
+import mongodb from './mongodb';
 
 module.exports = async (server) => {
     const io = socketIO(server);

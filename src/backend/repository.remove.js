@@ -1,5 +1,5 @@
-const { isValidRepository } = require('../tools/validator');
-const { removeOne, getTotal } = require('./watchlist');
+import { isValidRepository } from '../tools/validator';
+import { removeOne, getTotal } from './watchlist';
 
 module.exports = async (db, repository) => {
     if (!isValidRepository(repository)) {

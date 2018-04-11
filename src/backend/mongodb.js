@@ -1,6 +1,6 @@
-const { MongoClient } = require('mongodb');
+import { MongoClient } from 'mongodb';
 
-const { databaseName, environment } = require('../config');
+import { databaseName, environment } from '../config';
 
 const host = process.env.MONGO_HOST || 'localhost';
 
